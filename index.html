@@ -1024,6 +1024,13 @@ function AILeadershipCourse() {
   };
 
   const allQuizRevealed = mod.quiz && mod.quiz.every((_, qi) => quizRevealed[qi]);
+  const allQuizCorrect = mod.quiz && mod.quiz.every((q, qi) => quizAnswers[qi] === q.correct);
+
+  useEffect(() => {
+    if (quizMode && allQuizRevealed && allQuizCorrect && !isQuizCompleted(activeModule)) {
+      markQuizComplete(activeModule);
+    }
+  }, [quizMode, allQuizRevealed, allQuizCorrect, activeModule]);
 
   const renderContent = (text) => {
     const lines = text.split("\n");
@@ -1180,7 +1187,7 @@ function AILeadershipCourse() {
             );
           }),
           React.createElement("div", { style: s.bottomActions },
-            allQuizRevealed && !isQuizCompleted(activeModule) ? React.createElement("button", { onClick: () => markQuizComplete(activeModule), style: s.completeBtn }, "Mark Quiz Complete") : isQuizCompleted(activeModule) ? React.createElement("button", { style: Object.assign({}, s.completeBtn, s.completeBtnDone) }, "✓ Quiz Completed") : React.createElement("div", null),
+            allQuizRevealed && allQuizCorrect ? React.createElement("div", { style: Object.assign({}, s.quizPassBanner, { background: "rgba(92, 184, 138, 0.1)", borderColor: "#5CB88A" }) }, React.createElement("span", { style: { color: "#5CB88A", fontWeight: 700 } }, "✓ Quiz Passed — Module Complete")) : allQuizRevealed && !allQuizCorrect ? React.createElement("div", { style: Object.assign({}, s.quizPassBanner, { background: "rgba(212, 118, 106, 0.1)", borderColor: "#D4766A" }) }, React.createElement("span", { style: { color: "#D4766A", fontWeight: 700 } }, "✗ Some answers incorrect — review the explanations and retry"), React.createElement("button", { onClick: () => { setQuizAnswers({}); setQuizRevealed({}); }, style: Object.assign({}, s.revealBtn, { marginTop: 12, marginLeft: 0 }) }, "Retry Quiz")) : React.createElement("div", null),
             React.createElement("div", { style: s.navButtons },
               React.createElement("button", { onClick: goPrev, style: s.navBtn }, "← Previous"),
               !isLast ? React.createElement("button", { onClick: goNext, style: Object.assign({}, s.navBtn, s.navBtnPrimary) }, "Next Module →") : React.createElement("span", { style: s.finishLabel }, pct === 100 ? "🎉 Course Complete!" : "Last module")
@@ -1250,6 +1257,7 @@ const s = {
   quizOptionText: { fontSize: 14, lineHeight: 1.65, fontFamily: "'Source Serif 4', serif" },
   revealBtn: { marginTop: 16, padding: "10px 24px", borderRadius: 8, border: "1px solid #D4A574", background: "rgba(212, 165, 116, 0.08)", color: "#E8D5B7", cursor: "pointer", fontSize: 14, fontFamily: "'Fira Code', monospace" },
   quizExplanation: { marginTop: 18, padding: 20, borderLeft: "3px solid", backgroundColor: "rgba(15, 25, 35, 0.6)", borderRadius: "0 8px 8px 0" },
+  quizPassBanner: { padding: "16px 20px", borderRadius: 10, border: "1px solid", display: "flex", flexDirection: "column", alignItems: "flex-start", fontFamily: "'Fira Code', monospace", fontSize: 14 },
   quizResultLabel: { fontSize: 13, fontWeight: 700, fontFamily: "'Fira Code', monospace", marginBottom: 10 }
 };
 
