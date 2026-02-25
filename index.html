@@ -971,20 +971,17 @@ function AILeadershipCourse() {
     });
   };
 
-  const totalSections = modules.reduce((a, m) => a + m.sections.length + 1, 0);
-  const completedCount = Object.keys(completedSections).length;
+  const totalSections = modules.length;
+  const completedCount = modules.filter((_, mi) => isQuizCompleted(mi)).length;
   const pct = Math.round((completedCount / totalSections) * 100);
 
   const mod = modules[activeModule];
   const sec = !quizMode ? mod.sections[activeSection] : null;
 
   const moduleCompletedCount = (mi) => {
-    const m = modules[mi];
-    let c = m.sections.filter((_, si) => isCompleted(mi, si)).length;
-    if (isQuizCompleted(mi)) c++;
-    return c;
+    return isQuizCompleted(mi) ? 1 : 0;
   };
-  const moduleTotalCount = (mi) => modules[mi].sections.length + 1;
+  const moduleTotalCount = (mi) => 1;
 
   const goNext = () => {
     if (quizMode) {
@@ -1073,7 +1070,7 @@ function AILeadershipCourse() {
       React.createElement("div", { style: s.progressSection },
         React.createElement("div", { style: s.progressLabel },
           React.createElement("span", null, pct + "% complete"),
-          React.createElement("span", { style: s.progressCount }, completedCount + "/" + totalSections)
+          React.createElement("span", { style: s.progressCount }, completedCount + "/" + totalSections + " modules")
         ),
         React.createElement("div", { style: s.progressBar },
           React.createElement("div", { style: Object.assign({}, s.progressFill, { width: pct + "%" }) })
@@ -1095,7 +1092,7 @@ function AILeadershipCourse() {
               React.createElement("span", { style: Object.assign({}, s.moduleIcon, { color: allDone ? "#5CB88A" : isActive ? "#E8D5B7" : "#6B7C93" }) }, allDone ? "✓" : m.icon),
               React.createElement("div", null,
                 React.createElement("div", { style: Object.assign({}, s.moduleItemTitle, { color: isActive ? "#E8D5B7" : "#C8D6E5" }) }, m.title),
-                React.createElement("div", { style: s.moduleItemMeta }, mc + "/" + mt + " · " + m.estimatedMinutes + " min")
+                React.createElement("div", { style: s.moduleItemMeta }, (allDone ? "Quiz passed" : "Quiz pending") + " · " + m.estimatedMinutes + " min")
               )
             )
           );
@@ -1121,7 +1118,7 @@ function AILeadershipCourse() {
               onClick: () => { setActiveSection(si); setQuizMode(false); },
               style: Object.assign({}, s.sectionTab, !quizMode && si === activeSection ? s.sectionTabActive : {})
             },
-              React.createElement("span", { style: Object.assign({}, s.sectionTabDot, { backgroundColor: isCompleted(activeModule, si) ? "#5CB88A" : !quizMode && si === activeSection ? "#E8D5B7" : "#3A4A5C" }) }),
+              React.createElement("span", { style: Object.assign({}, s.sectionTabDot, { backgroundColor: !quizMode && si === activeSection ? "#E8D5B7" : "#3A4A5C" }) }),
               sc.heading
             )
           ),
@@ -1141,10 +1138,7 @@ function AILeadershipCourse() {
             React.createElement("div", { style: s.sectionBody }, renderContent(sec.content))
           ),
           React.createElement("div", { style: s.bottomActions },
-            React.createElement("button", {
-              onClick: () => toggleComplete(activeModule, activeSection),
-              style: Object.assign({}, s.completeBtn, isCompleted(activeModule, activeSection) ? s.completeBtnDone : {})
-            }, isCompleted(activeModule, activeSection) ? "✓ Completed" : "Mark as Complete"),
+            React.createElement("div", null),
             React.createElement("div", { style: s.navButtons },
               !isFirst && React.createElement("button", { onClick: goPrev, style: s.navBtn }, "← Previous"),
               React.createElement("button", { onClick: goNext, style: Object.assign({}, s.navBtn, s.navBtnPrimary) }, "Next →")
