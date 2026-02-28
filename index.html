@@ -928,7 +928,8 @@ function AILeadershipCourse() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [quizMode, setQuizMode] = useState(false);
   const [quizAnswers, setQuizAnswers] = useState({});
-  const [quizRevealed, setQuizRevealed] = useState({});
+  const [quizSubmitted, setQuizSubmitted] = useState(false);
+  const [quizPassed, setQuizPassed] = useState(false);
   const contentRef = useRef(null);
 
   useEffect(() => {
@@ -988,7 +989,8 @@ function AILeadershipCourse() {
         setActiveSection(0);
         setQuizMode(false);
         setQuizAnswers({});
-        setQuizRevealed({});
+        setQuizSubmitted(false);
+        setQuizPassed(false);
       }
     } else if (activeSection < mod.sections.length - 1) {
       setActiveSection(activeSection + 1);
@@ -1013,22 +1015,27 @@ function AILeadershipCourse() {
   const isLast = activeModule === modules.length - 1 && quizMode;
 
   const selectQuizAnswer = (qi, oi) => {
-    if (quizRevealed[qi] !== undefined) return;
+    if (quizSubmitted) return;
     setQuizAnswers((prev) => { const n = Object.assign({}, prev); n[qi] = oi; return n; });
   };
 
-  const revealQuizAnswer = (qi) => {
-    setQuizRevealed((prev) => { const n = Object.assign({}, prev); n[qi] = true; return n; });
-  };
-
-  const allQuizRevealed = mod.quiz && mod.quiz.every((_, qi) => quizRevealed[qi]);
+  const allQuestionsAnswered = mod.quiz && mod.quiz.every((_, qi) => quizAnswers[qi] !== undefined);
   const allQuizCorrect = mod.quiz && mod.quiz.every((q, qi) => quizAnswers[qi] === q.correct);
 
-  useEffect(() => {
-    if (quizMode && allQuizRevealed && allQuizCorrect && !isQuizCompleted(activeModule)) {
+  const submitQuiz = () => {
+    setQuizSubmitted(true);
+    if (allQuizCorrect) {
+      setQuizPassed(true);
       markQuizComplete(activeModule);
     }
-  }, [quizMode, allQuizRevealed, allQuizCorrect, activeModule]);
+  };
+
+  const retryQuiz = () => {
+    setQuizAnswers({});
+    setQuizSubmitted(false);
+    setQuizPassed(false);
+    if (contentRef.current) contentRef.current.scrollTop = 0;
+  };
 
   const renderContent = (text) => {
     const lines = text.split("\n");
@@ -1090,7 +1097,7 @@ function AILeadershipCourse() {
           const allDone = mc === mt;
           return React.createElement("button", {
             key: m.id,
-            onClick: () => { setActiveModule(mi); setActiveSection(0); setQuizMode(false); setQuizAnswers({}); setQuizRevealed({}); },
+            onClick: () => { setActiveModule(mi); setActiveSection(0); setQuizMode(false); setQuizAnswers({}); setQuizSubmitted(false); setQuizPassed(false); },
             style: Object.assign({}, s.moduleItem, isActive ? s.moduleItemActive : {})
           },
             React.createElement("div", { style: s.moduleItemLeft },
@@ -1152,21 +1159,18 @@ function AILeadershipCourse() {
         ) : React.createElement(React.Fragment, null,
           React.createElement("div", { style: s.quizIntro },
             React.createElement("h2", { style: s.sectionHeading }, "Apply What You Learned"),
-            React.createElement("p", { style: s.bodyText }, "These aren't recall questions — they're scenarios that require you to apply the concepts to make a decision. Choose your answer, then reveal the explanation to see if your reasoning matches.")
+            React.createElement("p", { style: s.bodyText }, quizSubmitted && quizPassed ? "All answers correct. Here are the explanations for each scenario." : "Answer all questions, then submit. You must get every answer correct to pass. If you don't pass, you won't be told which questions were wrong.")
           ),
           mod.quiz.map((q, qi) => {
             const selected = quizAnswers[qi];
-            const revealed = quizRevealed[qi];
-            const isCorrect = selected === q.correct;
             return React.createElement("div", { key: qi, style: s.quizQuestion },
               React.createElement("div", { style: s.quizQuestionNumber }, "Scenario " + (qi + 1) + " of " + mod.quiz.length),
               React.createElement("p", { style: s.quizScenario }, q.scenario),
               React.createElement("div", { style: s.quizOptions },
                 q.options.map((opt, oi) => {
                   let optStyle = Object.assign({}, s.quizOption);
-                  if (revealed) {
+                  if (quizSubmitted && quizPassed) {
                     if (oi === q.correct) optStyle = Object.assign({}, optStyle, s.quizOptionCorrect);
-                    else if (oi === selected && oi !== q.correct) optStyle = Object.assign({}, optStyle, s.quizOptionWrong);
                     else optStyle = Object.assign({}, optStyle, s.quizOptionDimmed);
                   } else if (selected === oi) {
                     optStyle = Object.assign({}, optStyle, s.quizOptionSelected);
@@ -1177,18 +1181,16 @@ function AILeadershipCourse() {
                   );
                 })
               ),
-              selected !== undefined && !revealed && React.createElement("button", { onClick: () => revealQuizAnswer(qi), style: s.revealBtn }, "Check Answer"),
-              revealed && React.createElement("div", { style: Object.assign({}, s.quizExplanation, { borderColor: isCorrect ? "#5CB88A" : "#D4766A" }) },
-                React.createElement("div", { style: Object.assign({}, s.quizResultLabel, { color: isCorrect ? "#5CB88A" : "#D4766A" }) }, isCorrect ? "✓ Correct" : "✗ Not quite"),
+              quizSubmitted && quizPassed && React.createElement("div", { style: Object.assign({}, s.quizExplanation, { borderColor: "#5CB88A" }) },
                 React.createElement("p", { style: Object.assign({}, s.bodyText, { fontSize: 14, marginBottom: 0 }) }, q.explanation)
               )
             );
           }),
           React.createElement("div", { style: s.bottomActions },
-            allQuizRevealed && allQuizCorrect ? React.createElement("div", { style: Object.assign({}, s.quizPassBanner, { background: "rgba(92, 184, 138, 0.1)", borderColor: "#5CB88A" }) }, React.createElement("span", { style: { color: "#5CB88A", fontWeight: 700 } }, "\u2713 Quiz Passed \u2014 Module Complete")) : allQuizRevealed && !allQuizCorrect ? React.createElement("div", { style: Object.assign({}, s.quizPassBanner, { background: "rgba(212, 118, 106, 0.1)", borderColor: "#D4766A" }) }, React.createElement("span", { style: { color: "#D4766A", fontWeight: 700 } }, "\u2717 Some answers incorrect \u2014 review and retry"), React.createElement("button", { onClick: () => { setQuizAnswers({}); setQuizRevealed({}); }, style: Object.assign({}, s.revealBtn, { marginTop: 12 }) }, "Retry Quiz")) : React.createElement("div", null),
+            quizSubmitted && quizPassed ? React.createElement("div", { style: Object.assign({}, s.quizPassBanner, { background: "rgba(92, 184, 138, 0.1)", borderColor: "#5CB88A" }) }, React.createElement("span", { style: { color: "#5CB88A", fontWeight: 700 } }, "\u2713 Quiz Passed \u2014 Module Complete")) : quizSubmitted && !quizPassed ? React.createElement("div", { style: Object.assign({}, s.quizPassBanner, { background: "rgba(212, 118, 106, 0.1)", borderColor: "#D4766A" }) }, React.createElement("span", { style: { color: "#D4766A", fontWeight: 700 } }, "\u2717 Quiz not passed \u2014 review the material and try again"), React.createElement("button", { onClick: retryQuiz, style: Object.assign({}, s.revealBtn, { marginTop: 12 }) }, "Retry Quiz")) : allQuestionsAnswered ? React.createElement("button", { onClick: submitQuiz, style: Object.assign({}, s.navBtn, s.navBtnPrimary, { padding: "12px 32px" }) }, "Submit Quiz") : React.createElement("div", { style: { color: "#4A5A6C", fontSize: 13, fontFamily: "'Fira Code', monospace" } }, Object.keys(quizAnswers).length + " of " + mod.quiz.length + " answered"),
             React.createElement("div", { style: s.navButtons },
-              React.createElement("button", { onClick: goPrev, style: s.navBtn }, "← Previous"),
-              !isLast ? React.createElement("button", { onClick: goNext, style: Object.assign({}, s.navBtn, s.navBtnPrimary) }, "Next Module →") : React.createElement("span", { style: s.finishLabel }, pct === 100 ? "🎉 Course Complete!" : "Last module")
+              React.createElement("button", { onClick: goPrev, style: s.navBtn }, "\u2190 Previous"),
+              !isLast ? React.createElement("button", { onClick: goNext, style: Object.assign({}, s.navBtn, s.navBtnPrimary) }, "Next Module \u2192") : React.createElement("span", { style: s.finishLabel }, pct === 100 ? "\uD83C\uDF89 Course Complete!" : "Last module")
             )
           )
         )
