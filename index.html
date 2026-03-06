@@ -1812,12 +1812,12 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
       {
         scenario: "Your team's AI agent has a 6,000-token system prompt that's identical for every merchant query. An engineer proposes expanding it to 12,000 tokens with more detailed instructions. What cost implication should you flag?",
         options: [
-          "Doubling the system prompt doubles the input token cost per query, which is the primary concern",
           "The larger system prompt consumes more KV cache memory per request, reducing concurrent requests per GPU and increasing effective serving cost beyond just the token price",
+          "Doubling the system prompt doubles the input token cost per query, which is the primary concern",
           "There's no significant cost impact since system prompts are processed once and cached automatically",
           "The main concern is latency, not cost \u2014 longer prompts take longer to process but don't meaningfully affect serving economics"
         ],
-        correct: 1,
+        correct: 0,
         explanation: "KV cache is the hidden cost. A larger system prompt means more GPU memory consumed per request, which reduces how many requests a GPU can handle concurrently. This increases the effective cost per request beyond what token pricing alone suggests. Prefix caching can help if all requests share the same prompt, but doubling the prompt still has real memory implications."
       },
       {
@@ -1859,22 +1859,22 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
         scenario: "Your team self-hosts a 70B model for an internal tool. They're serving it in FP16 across 2 A100 GPUs at $4/hr each. An engineer proposes quantizing to INT4, which would fit on a single GPU. Quality benchmarks show 2% accuracy drop on your eval set. Should you approve?",
         options: [
           "No \u2014 any quality degradation is unacceptable and the cost savings don't justify the risk",
-          "Yes \u2014 for an internal tool, 2% accuracy drop is likely acceptable, and cutting from $8/hr to $4/hr (50% cost reduction) while also reducing inference latency is a strong trade-off",
           "Only if the team can eliminate the 2% quality gap through better prompt engineering on the quantized model",
+          "Yes \u2014 for an internal tool, 2% accuracy drop is likely acceptable, and cutting from $8/hr to $4/hr (50% cost reduction) while also reducing inference latency is a strong trade-off",
           "Approve INT8 instead as a compromise \u2014 it provides most of the cost savings with less quality risk"
         ],
-        correct: 1,
+        correct: 2,
         explanation: "For internal tools, the quality-cost trade-off clearly favors quantization. 2% accuracy drop is likely imperceptible in practice for an internal tool, while 50% cost reduction is significant. The key insight is matching quality requirements to the use case \u2014 customer-facing features warrant more caution, but internal tools can tolerate the trade-off."
       },
       {
         scenario: "Your AI feature has P50 latency of 800ms but P99 latency of 12 seconds. Users complain about \"random slowness.\" The team says average latency is fine. What's the real problem?",
         options: [
           "The model is too large and needs to be replaced with a smaller, faster model",
-          "P99 at 12 seconds means 1 in 100 requests is 15x slower than typical \u2014 likely caused by batching delays at peak load or KV cache memory pressure. Averages hide tail latency that destroys user experience",
+          "The network connection between the application and the model serving infrastructure is unstable",
           "The feature needs a loading indicator to set user expectations for variable response times",
-          "The network connection between the application and the model serving infrastructure is unstable"
+          "P99 at 12 seconds means 1 in 100 requests is 15x slower than typical \u2014 likely caused by batching delays at peak load or KV cache memory pressure. Averages hide tail latency that destroys user experience"
         ],
-        correct: 1,
+        correct: 3,
         explanation: "Tail latency is an AI serving problem that traditional web engineers often underdiagnose. P99 at 12s while P50 is 800ms signals batching contention or memory pressure under load. The fix is in the serving layer: better batching strategy, more GPU headroom, or request prioritization. Always monitor P95/P99, not just averages."
       }
     ]
@@ -1904,12 +1904,12 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
       {
         scenario: "Your RAG system uses a general-purpose embedding model. It works well for natural language questions but fails badly when merchants search by product codes, error codes, or internal IDs. Your team proposes switching to a larger embedding model. Is that the right fix?",
         options: [
-          "Yes \u2014 larger embedding models have more dimensions and can capture specialized terminology better",
           "No \u2014 the issue is domain specificity, not model size. A larger general model still won't understand your proprietary codes. Either fine-tune the embedding model on your domain data or add hybrid search (vector + keyword) to catch exact-match terms",
+          "Yes \u2014 larger embedding models have more dimensions and can capture specialized terminology better",
           "Yes \u2014 but combine it with a re-ranking model for additional accuracy",
           "No \u2014 switch to a knowledge graph instead of vector search for structured lookups"
         ],
-        correct: 1,
+        correct: 0,
         explanation: "A larger general model doesn't know that 'PX-4092' is an error code any more than a smaller one does. The problem is domain specificity. Two solutions: fine-tune the embedding model on your domain data so it learns that codes are meaningful, or add keyword search alongside vector search (hybrid approach) to catch exact-match terms that embeddings miss."
       },
       {
@@ -1951,22 +1951,22 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
         scenario: "Your RAG system retrieves the right documents 88% of the time, but final answer quality is only 72%. An engineer says the 16-point gap proves the LLM is the bottleneck. Is this analysis correct?",
         options: [
           "Yes \u2014 if retrieval is 88% but answers are 72%, the LLM is clearly underperforming with the context it receives",
-          "Not necessarily \u2014 the gap could be caused by multiple factors: the retrieved docs might be relevant but incomplete (chunking issue), the LLM might hallucinate despite having good context (faithfulness issue), or the 88% retrieval might miss critical documents for the hardest queries. Need component-level diagnosis before concluding",
           "No \u2014 the 12% retrieval miss rate explains most of the answer quality gap, so retrieval is still the bottleneck",
+          "Not necessarily \u2014 the gap could be caused by multiple factors: the retrieved docs might be relevant but incomplete (chunking issue), the LLM might hallucinate despite having good context (faithfulness issue), or the 88% retrieval might miss critical documents for the hardest queries. Need component-level diagnosis before concluding",
           "The gap suggests the re-ranking step is failing to surface the most relevant documents to the top of the context"
         ],
-        correct: 1,
+        correct: 2,
         explanation: "Component-level diagnosis is essential. The gap between retrieval accuracy and answer quality could have multiple causes. Test generation quality given perfect retrieval (the 'generation given oracle context' eval). If answers are 95%+ with perfect context, the retrieval gap is the bottleneck. If answers are still 72% with perfect context, the LLM or prompt is the issue. Jumping to conclusions without this diagnostic wastes optimization effort."
       },
       {
         scenario: "Merchants ask complex questions like 'How does our return policy compare to what you offered last year and how has it affected dispute rates?' Your basic RAG system retrieves current return policy docs but misses last year's policy and dispute rate data. Best technique to improve this?",
         options: [
           "Increase the number of retrieved chunks from 5 to 20 to cast a wider net",
-          "Query decomposition \u2014 break the complex question into sub-queries ('current return policy,' 'previous year return policy,' 'dispute rate trends') and retrieve for each separately",
+          "Add the dispute rate data directly into the system prompt so it's always available",
           "Switch to a larger embedding model that can better understand multi-part questions",
-          "Add the dispute rate data directly into the system prompt so it's always available"
+          "Query decomposition \u2014 break the complex question into sub-queries ('current return policy,' 'previous year return policy,' 'dispute rate trends') and retrieve for each separately"
         ],
-        correct: 1,
+        correct: 3,
         explanation: "Classic multi-part query problem. A single embedding of the full question won't match well against any of the three needed document types. Query decomposition breaks it into focused sub-queries, each retrieving the right documents. More chunks (option A) adds noise. A larger model (option C) doesn't solve the multi-part matching problem. System prompt (option D) doesn't scale."
       }
     ]
@@ -1992,12 +1992,12 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
       {
         scenario: "Your team has a single monolithic system prompt (4,000 tokens) that handles all merchant query types. It works 75% of the time but struggles with edge cases. Quality improvements have plateaued despite weeks of prompt tweaking. What architectural change would you recommend?",
         options: [
-          "Upgrade to a more capable model that can follow complex instructions more reliably",
           "Break it into a classification step plus specialized prompts per query type \u2014 each specialized prompt can be shorter, more focused, and independently optimized with domain-specific examples",
+          "Upgrade to a more capable model that can follow complex instructions more reliably",
           "Add more few-shot examples to cover the edge cases the current prompt misses",
           "Fine-tune a model on past conversations to replace the need for a complex system prompt"
         ],
-        correct: 1,
+        correct: 0,
         explanation: "When a monolithic prompt plateaus, the issue is usually trying to do too many things in one prompt. A classifier + specialized prompts lets you optimize each path independently, use domain-specific examples per category, and isolate failures to specific query types. This typically breaks through the plateau because each specialized prompt has a simpler, clearer task."
       },
       {
@@ -2035,22 +2035,22 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
         scenario: "Your team builds an AI tool that analyzes merchant financial data and produces strategic recommendations. Using GPT-4o, the recommendations are generic and miss nuances. Using o1 (reasoning model), they're significantly better but cost 30x more per query and take 45 seconds. Volume is 200 analyses per day. Should you use the reasoning model?",
         options: [
           "No \u2014 30x cost increase is never justifiable, and the 45-second latency will frustrate users",
-          "Yes \u2014 at 200/day, even 30x cost is manageable in absolute terms, and for high-value strategic recommendations where quality directly impacts merchant outcomes, the quality improvement is worth it",
           "Use GPT-4o with chain-of-thought prompting to approximate the reasoning model's quality at lower cost",
+          "Yes \u2014 at 200/day, even 30x cost is manageable in absolute terms, and for high-value strategic recommendations where quality directly impacts merchant outcomes, the quality improvement is worth it",
           "Use the reasoning model but reduce to only the top 50 most important merchants per day"
         ],
-        correct: 1,
+        correct: 2,
         explanation: "Low-volume, high-value is exactly where reasoning models shine. 200 analyses/day at even $0.50 per analysis = $100/day = $3K/month. If the strategic recommendations meaningfully improve merchant outcomes, this is trivially justified. The 45-second latency is acceptable for an analytical tool (not real-time). Option C is worth testing but might not match the quality improvement."
       },
       {
         scenario: "A team proposes using o1 for all merchant support queries to 'get the best possible quality.' Support volume is 500K queries/month. Current cost with GPT-4o-mini is $5K/month. What's wrong with this proposal?",
         options: [
           "Nothing \u2014 if quality improves, the cost is justified regardless of volume",
-          "The 30-50x cost increase at 500K volume means $150K-250K/month. Most support queries are simple and don't benefit from extended reasoning. Route only complex queries (maybe 5%) to the reasoning model while keeping simple queries on the fast, cheap model",
+          "o1's latency would make the support experience too slow for all queries",
           "The team should benchmark o1 against GPT-4o-mini on their eval set first before making any cost projections",
-          "o1's latency would make the support experience too slow for all queries"
+          "The 30-50x cost increase at 500K volume means $150K-250K/month. Most support queries are simple and don't benefit from extended reasoning. Route only complex queries (maybe 5%) to the reasoning model while keeping simple queries on the fast, cheap model"
         ],
-        correct: 1,
+        correct: 3,
         explanation: "The classification-and-route pattern. At 500K/month, blanket use of a reasoning model is financially devastating and unnecessary. Most support queries ('What's my balance?' 'How do I reset my password?') don't benefit from extended reasoning. Route the 5% that are genuinely complex to the reasoning model, serve the rest cheaply. This is the standard pattern for cost-optimizing AI features."
       }
     ]
@@ -2076,23 +2076,23 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
       {
         scenario: "An ML engineer says: 'I'm fine-tuning with LoRA rank 256 on 500 examples. Training loss is very low but validation performance is poor.' What's happening?",
         options: [
-          "The learning rate is too high and the model is diverging during training",
           "LoRA rank 256 with only 500 examples is overfitting \u2014 the high-capacity adapter memorized the training data instead of learning general patterns. Lower the rank or get more training data",
+          "The learning rate is too high and the model is diverging during training",
           "The validation set is too different from the training data distribution",
           "500 examples is too few for any LoRA configuration to learn meaningful patterns"
         ],
-        correct: 1,
+        correct: 0,
         explanation: "Classic overfitting. Low training loss + poor validation = the model memorized the training examples rather than learning generalizable patterns. LoRA rank 256 is very high capacity for only 500 examples. The fix: reduce rank (16-32 is usually sufficient for small datasets) or gather more training data. The rank should be proportional to dataset size and task complexity."
       },
       {
         scenario: "Your team proposes full fine-tuning of a 70B model for a domain-specific classification task. They estimate 4 weeks and $80K in compute. What should you push back with?",
         options: [
-          "Have they tried QLoRA first? It can achieve comparable quality at 1/10th the cost and time, and the resulting adapter is portable across base model updates. Full fine-tuning should only be justified by evidence that parameter-efficient methods are insufficient",
           "Full fine-tuning is never justified for classification tasks \u2014 prompt engineering always works",
+          "Have they tried QLoRA first? It can achieve comparable quality at 1/10th the cost and time, and the resulting adapter is portable across base model updates. Full fine-tuning should only be justified by evidence that parameter-efficient methods are insufficient",
           "The budget is reasonable for fine-tuning a 70B model and 4 weeks is a standard timeline",
           "They should use a smaller model for classification since 70B is overkill"
         ],
-        correct: 0,
+        correct: 1,
         explanation: "Always start with the cheapest sufficient approach. QLoRA can fine-tune a 70B model on a single GPU for a fraction of the cost. Full fine-tuning should only be justified when LoRA/QLoRA produce measurably inferior results on the eval set. Additionally, QLoRA adapters are portable \u2014 when the base model is updated, you can more easily retrain the adapter than redo full fine-tuning."
       }
     ]
@@ -2150,11 +2150,11 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
         scenario: "Your AI merchant support tool's quality drops subtly over 3 weeks. The model hasn't changed, the prompts haven't changed, and no code was deployed. After investigation, the team discovers the knowledge base data pipeline had a silent failure and hasn't refreshed in 3 weeks. How do you prevent this from happening again?",
         options: [
           "Add more robust error handling to the data pipeline code to prevent silent failures",
-          "Add data freshness monitoring with alerts: track when each data source was last updated, alert when any source exceeds its freshness SLA, and include data freshness as a metric on the AI feature's monitoring dashboard",
+          "Add a manual weekly check where the data team verifies all pipelines are running correctly",
           "Switch to real-time data ingestion instead of batch pipelines to eliminate the refresh dependency",
-          "Add a manual weekly check where the data team verifies all pipelines are running correctly"
+          "Add data freshness monitoring with alerts: track when each data source was last updated, alert when any source exceeds its freshness SLA, and include data freshness as a metric on the AI feature's monitoring dashboard"
         ],
-        correct: 1,
+        correct: 3,
         explanation: "Data freshness monitoring is the systemic fix. Silent pipeline failures are common and can go undetected for weeks without automated monitoring. Tracking last-update timestamps and alerting on staleness catches the problem immediately. Error handling (option A) helps but doesn't catch all failure modes. Real-time ingestion (option C) is over-engineering for most use cases. Manual checks (option D) don't scale."
       }
     ]
@@ -2180,12 +2180,12 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
       {
         scenario: "Your AI-powered merchant dashboard takes 8 seconds to load because it makes 3 sequential LLM calls to generate insights. The product team says the AI features aren't worth the latency hit. How do you architect this differently?",
         options: [
-          "Use a faster model to reduce the latency of each individual LLM call",
           "Pre-compute insights via event-driven pipeline when merchant data changes, cache the results, and serve instantly on dashboard load. Only run real-time AI for fresh queries the cache can't answer",
+          "Use a faster model to reduce the latency of each individual LLM call",
           "Run all 3 LLM calls in parallel instead of sequentially to reduce total latency to the longest single call",
           "Add streaming so the user sees partial results appearing progressively while other calls complete"
         ],
-        correct: 1,
+        correct: 0,
         explanation: "Event-driven pre-computation is the architectural fix. Dashboard insights don't need to be generated in real-time \u2014 they can be computed when data changes and cached for instant serving. This eliminates the latency problem entirely for 90%+ of page loads. Options C and D are good optimizations for genuinely real-time features, but for dashboards, pre-compute is the right pattern."
       }
     ]
@@ -2243,11 +2243,11 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
         scenario: "A merchant reports: 'Your AI gave me completely wrong information about my account.' Your team checks the current system and it produces correct responses for similar queries. They conclude it was a one-off glitch. Is that an adequate response?",
         options: [
           "Yes \u2014 non-determinism means occasional bad outputs are expected, and the system works correctly now",
-          "No \u2014 pull the trace for that specific request to understand exactly what happened: what was retrieved, what was in context, which model version responded. Without the trace, 'it works now' doesn't explain what went wrong or whether it will happen again",
           "No \u2014 they should run the exact same query 100 times to test for intermittent failures",
+          "No \u2014 pull the trace for that specific request to understand exactly what happened: what was retrieved, what was in context, which model version responded. Without the trace, 'it works now' doesn't explain what went wrong or whether it will happen again",
           "Yes \u2014 but add the merchant's query to the eval set to monitor for recurrence"
         ],
-        correct: 1,
+        correct: 2,
         explanation: "Without the trace, you're guessing. The failure could have been: a model provider update that's since been reverted, a data pipeline issue that's since been fixed (masking the root cause), a retrieval failure for that specific query, or context pollution from the conversation history. Only the trace reveals the actual cause. 'It works now' is not root cause analysis."
       }
     ]
@@ -2273,12 +2273,12 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
       {
         scenario: "You have budget for one AI investment in the merchant lifecycle. Team A proposes AI-powered checkout conversion (active commerce stage, 50M transactions/month). Team B proposes AI onboarding document processing (onboarding stage, 10K new merchants/month). Which is the better strategic investment?",
         options: [
-          "Team A \u2014 50M transactions means even small conversion improvements have massive revenue impact, plus the volume creates a strong data flywheel for continuous improvement",
+          "Team A \u2014 but only if they can demonstrate measurable conversion lift in an A/B test within 90 days",
           "Team B \u2014 onboarding is the merchant's first experience and sets the tone for the entire relationship",
           "They're equal \u2014 both stages benefit from AI and the choice depends on implementation difficulty",
-          "Team A \u2014 but only if they can demonstrate measurable conversion lift in an A/B test within 90 days"
+          "Team A \u2014 50M transactions means even small conversion improvements have massive revenue impact, plus the volume creates a strong data flywheel for continuous improvement"
         ],
-        correct: 0,
+        correct: 3,
         explanation: "Volume and data flywheel are decisive. 50M transactions/month creates massive signal for continuous improvement \u2014 every transaction is a data point about what works. The conversion impact compounds (even 10 basis points on 50M transactions is significant). Onboarding is important but the lower volume means slower learning and smaller absolute impact. The best AI investments are high-volume with clear feedback loops."
       }
     ]
@@ -2304,12 +2304,12 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
       {
         scenario: "A competitor launches an 'AI-powered merchant insights' feature that's essentially GPT-4 summarizing transaction data with nice visualizations. Your CEO is worried. How do you assess the competitive threat?",
         options: [
-          "It's a serious threat \u2014 first-mover advantage in AI features creates switching costs that are hard to overcome",
           "Low threat \u2014 it's an AI-enhanced feature (summarizing existing data), not AI-native. Any competitor can replicate it with the same model. The real competitive question is who builds data flywheels and integration depth that compound over time",
+          "It's a serious threat \u2014 first-mover advantage in AI features creates switching costs that are hard to overcome",
           "Medium threat \u2014 the feature itself isn't a moat but the PR and merchant perception of AI leadership matters",
           "Respond by launching a similar feature quickly to neutralize the competitive positioning"
         ],
-        correct: 1,
+        correct: 0,
         explanation: "A feature that's just 'LLM + your data + nice UI' is easily replicable. It's AI-enhanced, not AI-native. The competitive question isn't who has the feature first, but who builds the compounding advantages: proprietary data flywheels, deep workflow integration, and network effects. Responding with a copycat feature is reactive strategy \u2014 invest instead where your unique data and platform position create durable advantage."
       }
     ]
@@ -2367,11 +2367,11 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
         scenario: "Your AI system runs on GPT-4-0613, which OpenAI announced will be deprecated in 6 months. Your team says 'we'll migrate when we have to.' What's wrong with this approach?",
         options: [
           "Nothing \u2014 6 months is plenty of time and there are higher priorities than migrating a working system",
-          "Model migration is riskier than it appears: new model versions behave differently, all prompts need re-evaluation, edge cases will surface, and doing it under deadline pressure means less time for thorough testing. Start migration now with a proper bake-off and phased rollout",
           "They should immediately switch to the latest model to stay current",
+          "Model migration is riskier than it appears: new model versions behave differently, all prompts need re-evaluation, edge cases will surface, and doing it under deadline pressure means less time for thorough testing. Start migration now with a proper bake-off and phased rollout",
           "They should negotiate with OpenAI for an extended deprecation timeline"
         ],
-        correct: 1,
+        correct: 2,
         explanation: "Model migration is a form of AI technical debt. 'We'll do it later' means doing it under time pressure with less testing. New model versions change behavior in subtle ways that only comprehensive evaluation catches. Start the bake-off now: test the new model against your eval set, identify regression areas, adjust prompts, and do a phased rollout \u2014 all while you still have the safety net of the current model running in parallel."
       }
     ]
@@ -2399,10 +2399,10 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
         options: [
           "Sign the contract \u2014 15% accuracy improvement is significant and 2 years of guaranteed performance is valuable",
           "Build it yourself \u2014 3-4 months is reasonable and you avoid vendor lock-in on a capability that's core to your business",
-          "Evaluate the full picture: Is this a core differentiator or commodity capability? What's the startup's survival likelihood? What's the total cost comparison (contract vs. build + maintain)? Can you negotiate a shorter contract term with exit clauses while building the capability in parallel?",
-          "Use the startup's API now while building your own solution as a backup"
+          "Use the startup's API now while building your own solution as a backup",
+          "Evaluate the full picture: Is this a core differentiator or commodity capability? What's the startup's survival likelihood? What's the total cost comparison (contract vs. build + maintain)? Can you negotiate a shorter contract term with exit clauses while building the capability in parallel?"
         ],
-        correct: 2,
+        correct: 3,
         explanation: "Neither reflexive build nor reflexive buy. The decision depends on: strategic importance (is document processing a differentiator or commodity for your platform?), vendor risk (2-year contract with a startup that might not survive), total cost (their API fees vs. your build + ongoing maintenance), and negotiating leverage (short contract with exit clauses protects you). The comprehensive evaluation prevents both over-investing in building commodity infrastructure and over-depending on fragile vendors."
       }
     ]
@@ -2428,12 +2428,12 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
       {
         scenario: "Your fraud model has 94% accuracy overall. But analysis reveals it flags transactions from merchants in lower-income zip codes at 2x the rate of higher-income zip codes, with a 60% false positive rate in lower-income areas (vs. 15% in higher-income areas). What's the right response?",
         options: [
-          "The model is working correctly \u2014 higher fraud rates in lower-income areas justify higher flagging rates",
           "Investigate whether zip code (or correlated features) is acting as a proxy for protected characteristics. If so, retrain the model with techniques that reduce disparate impact (when a model disproportionately affects a protected group, even without intent), even if overall accuracy decreases slightly. Document the decision and implement ongoing fairness monitoring",
+          "The model is working correctly \u2014 higher fraud rates in lower-income areas justify higher flagging rates",
           "Remove zip code from the model's features entirely to eliminate the disparity",
           "Lower the flagging threshold for lower-income zip codes to equalize the flagging rate"
         ],
-        correct: 1,
+        correct: 0,
         explanation: "The 60% false positive rate in lower-income areas is the key signal \u2014 the model is wrong most of the time for this group, suggesting it's using proxy features rather than genuine fraud signals. Investigate root cause, retrain with fairness constraints, accept the accuracy trade-off, and monitor ongoing. Simply removing zip code (option C) might not work if other features also proxy for the same characteristic. Threshold adjustment (option D) is a band-aid, not a fix."
       }
     ]
@@ -2487,11 +2487,11 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
         scenario: "You're deciding between investing in agentic commerce (high risk, potentially transformative) or AI-powered merchant analytics (lower risk, clear near-term value). An advisor suggests using an LLM to help with the decision. What's the most valuable way to use it?",
         options: [
           "Ask the LLM which option has higher expected value based on industry trends",
-          "Ask it to generate the strongest arguments FOR and AGAINST each option, identify your unstated assumptions, and list what conditions would make each option clearly right or clearly wrong",
           "Ask it to analyze competitor moves to determine which option provides better competitive positioning",
+          "Ask it to generate the strongest arguments FOR and AGAINST each option, identify your unstated assumptions, and list what conditions would make each option clearly right or clearly wrong",
           "Don't use an LLM for strategic decisions \u2014 these require human judgment and domain expertise"
         ],
-        correct: 1,
+        correct: 2,
         explanation: "The highest-value use of AI in decision-making is cognitive augmentation \u2014 helping you think more thoroughly, not thinking for you. Generating strong arguments both ways forces consideration of perspectives you might have skipped. Identifying assumptions surfaces hidden risks. Defining conditions for success creates a decision framework you can revisit. The LLM doesn't decide \u2014 it expands your thinking."
       }
     ]
@@ -2514,11 +2514,11 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
         scenario: "A competitor announces 'revolutionary AI-powered fraud detection with 99.9% accuracy.' Their press release is light on details. How do you assess this?",
         options: [
           "Take it seriously \u2014 99.9% accuracy would be industry-leading and represents a significant competitive threat",
-          "Check their job postings (are they hiring ML engineers or just marketing?), look for published benchmarks or methodology, try to test the feature, and check if existing customers report measurable improvement. 99.9% accuracy claims without methodology are almost certainly marketing",
+          "Accelerate your own fraud detection AI to match or exceed their claimed performance",
           "Ignore it \u2014 every company makes inflated AI claims and this is no different",
-          "Accelerate your own fraud detection AI to match or exceed their claimed performance"
+          "Check their job postings (are they hiring ML engineers or just marketing?), look for published benchmarks or methodology, try to test the feature, and check if existing customers report measurable improvement. 99.9% accuracy claims without methodology are almost certainly marketing"
         ],
-        correct: 1,
+        correct: 3,
         explanation: "Apply the vaporware test. Extraordinary claims require evidence. 99.9% fraud detection accuracy would be genuinely revolutionary \u2014 which is exactly why it's probably not real. Check the tangible signals: are they actually building ML infrastructure (job postings)? Is there reproducible methodology? Do real customers confirm it? Don't ignore it (they might have something real) but don't panic-react to unverified marketing either."
       }
     ]
@@ -2544,12 +2544,12 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
       {
         scenario: "You launch an AI writing assistant for internal communications. After 3 months, only 15% of employees use it regularly. The tool works well technically. What's most likely causing low adoption?",
         options: [
-          "The tool needs better features \u2014 15% adoption means it doesn't solve a real enough problem",
-          "Low adoption is typical for new tools \u2014 give it more time and it will grow organically",
           "The tool probably lacks integration into existing workflows, training on how to use it effectively, visible champions demonstrating value, and management encouragement. Technical quality alone doesn't drive adoption \u2014 organizational change management does",
+          "Low adoption is typical for new tools \u2014 give it more time and it will grow organically",
+          "The tool needs better features \u2014 15% adoption means it doesn't solve a real enough problem",
           "Make usage mandatory for all internal communications to accelerate adoption"
         ],
-        correct: 2,
+        correct: 0,
         explanation: "Technical quality is necessary but not sufficient for adoption. The 15% are likely the enthusiasts who adopt anything new. Moving to the early majority requires: seamless workflow integration (not a separate tool), visible demonstrations of value (champions sharing time savings), training (many people don't know how to use AI tools effectively), and cultural permission (management actively encouraging experimentation). Mandating usage (option D) creates resentment."
       }
     ]
@@ -2576,11 +2576,11 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
         scenario: "After a board meeting highlighting a competitor's AI features, your CEO says: 'I want us to announce 10 AI features by end of quarter.' You have 3 in production and 2 in development. What do you do?",
         options: [
           "Commit to the target and rally the team \u2014 urgency drives results",
-          "Push back with a longer timeline \u2014 explain that quality AI takes time",
           "Reframe: '5 features that demonstrably impact merchant metrics is a stronger announcement than 10 that check a box. Let me propose the specific 5 with evidence-based timelines'",
+          "Push back with a longer timeline \u2014 explain that quality AI takes time",
           "Agree to 10 but count internal tools, prototypes, and minor enhancements"
         ],
-        correct: 2,
+        correct: 1,
         explanation: "Reframe from quantity to impact. The CEO's underlying need is competitive positioning, not a number. Five features with clear merchant value is stronger than 10 of varying quality. This respects the urgency while protecting against shipping features that don't work \u2014 which would damage positioning more than a smaller set of excellent ones."
       }
     ]
@@ -2623,10 +2623,10 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
         options: [
           "Staying current on the latest model releases and AI research breakthroughs",
           "Building strong relationships with model providers and AI vendors",
-          "Demanding evaluation data before approving any AI decision \u2014 launch, model selection, architecture choice, or investment. Evidence-based decisions compound; intuition-based decisions don't",
-          "Hiring and retaining the best AI talent available in a competitive market"
+          "Hiring and retaining the best AI talent available in a competitive market",
+          "Demanding evaluation data before approving any AI decision \u2014 launch, model selection, architecture choice, or investment. Evidence-based decisions compound; intuition-based decisions don't"
         ],
-        correct: 2,
+        correct: 3,
         explanation: "If there's one thread running through all 48 modules, it's this: AI without measurement is guessing. Every major topic \u2014 model selection, architecture decisions, launch readiness, cost optimization, fairness, production monitoring \u2014 comes back to 'show me the data.' Leaders who build evaluation-first cultures make better decisions, ship more reliable systems, and earn more organizational trust. Everything else is important, but evidence-based decision-making is the foundation."
       }
     ]
@@ -2967,7 +2967,7 @@ function AILeadershipCourse() {
           }, darkMode ? "\u2600" : "\u263D")
         ),
         showSync && React.createElement("div", { style: Object.assign({}, s.syncPanel, { marginTop: 10 }) },
-          React.createElement("div", { style: { fontSize: 12, color: "#6B7C93", marginBottom: 8, fontFamily: "'Fira Code', monospace" } }, "GitHub token (repo scope):"),
+          React.createElement("div", { style: { fontSize: 12, color: darkMode ? "#6B7C93" : "#8A8480", marginBottom: 8, fontFamily: "'Fira Code', monospace" } }, "GitHub token (repo scope):"),
           React.createElement("input", {
             type: "password",
             value: syncToken,
@@ -3061,7 +3061,7 @@ function AILeadershipCourse() {
             );
           }),
           React.createElement("div", { style: s.bottomActions },
-            quizSubmitted && quizPassed ? React.createElement("div", { style: Object.assign({}, s.quizPassBanner, { background: "rgba(92, 184, 138, 0.1)", borderColor: "#5CB88A" }) }, React.createElement("span", { style: { color: "#5CB88A", fontWeight: 700 } }, "\u2713 Quiz Passed \u2014 Module Complete")) : quizSubmitted && !quizPassed ? React.createElement("div", { style: Object.assign({}, s.quizPassBanner, { background: "rgba(212, 118, 106, 0.1)", borderColor: "#D4766A" }) }, React.createElement("span", { style: { color: "#D4766A", fontWeight: 700 } }, "\u2717 Quiz not passed \u2014 review the material and try again"), React.createElement("button", { onClick: retryQuiz, style: Object.assign({}, s.revealBtn, { marginTop: 12 }) }, "Retry Quiz")) : allQuestionsAnswered ? React.createElement("button", { onClick: submitQuiz, style: Object.assign({}, s.navBtn, s.navBtnPrimary, { padding: "12px 32px" }) }, "Submit Quiz") : React.createElement("div", { style: { color: "#4A5A6C", fontSize: 13, fontFamily: "'Fira Code', monospace" } }, Object.keys(quizAnswers).length + " of " + mod.quiz.length + " answered"),
+            quizSubmitted && quizPassed ? React.createElement("div", { style: Object.assign({}, s.quizPassBanner, { background: "rgba(92, 184, 138, 0.1)", borderColor: "#5CB88A" }) }, React.createElement("span", { style: { color: "#5CB88A", fontWeight: 700 } }, "\u2713 Quiz Passed \u2014 Module Complete")) : quizSubmitted && !quizPassed ? React.createElement("div", { style: Object.assign({}, s.quizPassBanner, { background: "rgba(212, 118, 106, 0.1)", borderColor: "#D4766A" }) }, React.createElement("span", { style: { color: "#D4766A", fontWeight: 700 } }, "\u2717 Quiz not passed \u2014 review the material and try again"), React.createElement("button", { onClick: retryQuiz, style: Object.assign({}, s.revealBtn, { marginTop: 12 }) }, "Retry Quiz")) : allQuestionsAnswered ? React.createElement("button", { onClick: submitQuiz, style: Object.assign({}, s.navBtn, s.navBtnPrimary, { padding: "12px 32px" }) }, "Submit Quiz") : React.createElement("div", { style: { color: darkMode ? "#4A5A6C" : "#AAA49E", fontSize: 13, fontFamily: "'Fira Code', monospace" } }, Object.keys(quizAnswers).length + " of " + mod.quiz.length + " answered"),
             React.createElement("div", { style: s.navButtons },
               React.createElement("button", { onClick: goPrev, style: s.navBtn }, "\u2190 Previous"),
               !isLast ? React.createElement("button", { onClick: goNext, style: Object.assign({}, s.navBtn, s.navBtnPrimary) }, "Next Module \u2192") : React.createElement("span", { style: s.finishLabel }, pct === 100 ? "\uD83C\uDF89 Course Complete!" : "Last module")
