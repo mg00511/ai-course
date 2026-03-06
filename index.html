@@ -2650,6 +2650,39 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
 ];
 
 const progressKey = "ai-course-progress-v3";
+const ghTokenKey = "ai-course-gh-token";
+const ghRepo = "mg00511/ai-course";
+const ghFile = "progress.json";
+
+function githubSync(token, progress) {
+  var headers = { "Authorization": "token " + token, "Accept": "application/vnd.github+json" };
+  // Get current file SHA (needed for updates)
+  return fetch("https://api.github.com/repos/" + ghRepo + "/contents/" + ghFile, { headers: headers })
+    .then(function(r) { return r.ok ? r.json() : null; })
+    .then(function(existing) {
+      var body = {
+        message: "Sync progress",
+        content: btoa(JSON.stringify(progress, null, 2))
+      };
+      if (existing && existing.sha) body.sha = existing.sha;
+      return fetch("https://api.github.com/repos/" + ghRepo + "/contents/" + ghFile, {
+        method: "PUT", headers: headers, body: JSON.stringify(body)
+      });
+    })
+    .then(function(r) { return r.ok; });
+}
+
+function githubLoad(token) {
+  return fetch("https://api.github.com/repos/" + ghRepo + "/contents/" + ghFile, {
+    headers: { "Authorization": "token " + token, "Accept": "application/vnd.github+json" }
+  })
+  .then(function(r) { return r.ok ? r.json() : null; })
+  .then(function(data) {
+    if (data && data.content) return JSON.parse(atob(data.content));
+    return null;
+  })
+  .catch(function() { return null; });
+}
 
 function AILeadershipCourse() {
   const [activePhase, setActivePhase] = useState(1);
@@ -2661,20 +2694,78 @@ function AILeadershipCourse() {
   const [quizAnswers, setQuizAnswers] = useState({});
   const [quizSubmitted, setQuizSubmitted] = useState(false);
   const [quizPassed, setQuizPassed] = useState(false);
+  const [syncToken, setSyncToken] = useState("");
+  const [syncStatus, setSyncStatus] = useState("");
+  const [showSync, setShowSync] = useState(false);
   const contentRef = useRef(null);
 
   useEffect(() => {
     try {
       const saved = localStorage.getItem(progressKey);
       if (saved) setCompletedSections(JSON.parse(saved));
+      const token = localStorage.getItem(ghTokenKey);
+      if (token) {
+        setSyncToken(token);
+        // Auto-pull from GitHub on load
+        githubLoad(token).then(function(remote) {
+          if (remote) {
+            // Merge: keep whichever has more completions
+            var local = {};
+            try { local = JSON.parse(localStorage.getItem(progressKey) || "{}"); } catch(e) {}
+            var localCount = Object.keys(local).length;
+            var remoteCount = Object.keys(remote).length;
+            if (remoteCount > localCount) {
+              setCompletedSections(remote);
+              localStorage.setItem(progressKey, JSON.stringify(remote));
+            }
+          }
+        });
+      }
     } catch(e) {}
   }, []);
 
   useEffect(() => {
     try {
       localStorage.setItem(progressKey, JSON.stringify(completedSections));
+      // Auto-push to GitHub if token exists
+      var token = localStorage.getItem(ghTokenKey);
+      if (token && Object.keys(completedSections).length > 0) {
+        githubSync(token, completedSections);
+      }
     } catch(e) {}
   }, [completedSections]);
+
+  const handleSyncSetup = () => {
+    if (!syncToken) return;
+    localStorage.setItem(ghTokenKey, syncToken);
+    setSyncStatus("syncing");
+    githubLoad(syncToken).then(function(remote) {
+      if (remote && Object.keys(remote).length > Object.keys(completedSections).length) {
+        setCompletedSections(remote);
+        localStorage.setItem(progressKey, JSON.stringify(remote));
+        setSyncStatus("pulled");
+      } else {
+        return githubSync(syncToken, completedSections).then(function(ok) {
+          setSyncStatus(ok ? "pushed" : "error");
+        });
+      }
+    }).catch(function() { setSyncStatus("error"); });
+  };
+
+  const handleSyncPull = () => {
+    var token = localStorage.getItem(ghTokenKey);
+    if (!token) return;
+    setSyncStatus("syncing");
+    githubLoad(token).then(function(remote) {
+      if (remote) {
+        setCompletedSections(remote);
+        localStorage.setItem(progressKey, JSON.stringify(remote));
+        setSyncStatus("pulled");
+      } else {
+        setSyncStatus("no-remote");
+      }
+    }).catch(function() { setSyncStatus("error"); });
+  };
 
   useEffect(() => {
     if (contentRef.current) contentRef.current.scrollTop = 0;
@@ -2866,6 +2957,29 @@ function AILeadershipCourse() {
             )
           );
         })
+      ),
+      React.createElement("div", { style: s.syncSection },
+        !showSync ? React.createElement("button", {
+          onClick: () => setShowSync(true),
+          style: s.syncButton
+        }, localStorage.getItem(ghTokenKey) ? "\u2713 Sync enabled" : "\u2601 Enable sync") : React.createElement("div", { style: s.syncPanel },
+          React.createElement("div", { style: { fontSize: 12, color: "#6B7C93", marginBottom: 8, fontFamily: "'Fira Code', monospace" } }, "GitHub token (repo scope):"),
+          React.createElement("input", {
+            type: "password",
+            value: syncToken,
+            onChange: (e) => setSyncToken(e.target.value),
+            placeholder: "ghp_...",
+            style: s.syncInput
+          }),
+          React.createElement("div", { style: { display: "flex", gap: 6, marginTop: 8 } },
+            React.createElement("button", { onClick: handleSyncSetup, style: s.syncActionBtn }, "Save & Sync"),
+            React.createElement("button", { onClick: handleSyncPull, style: s.syncActionBtn }, "Pull"),
+            React.createElement("button", { onClick: () => setShowSync(false), style: Object.assign({}, s.syncActionBtn, { color: "#6B7C93" }) }, "\u2715")
+          ),
+          syncStatus && React.createElement("div", { style: { fontSize: 11, marginTop: 6, fontFamily: "'Fira Code', monospace", color: syncStatus === "error" ? "#D4766A" : "#5CB88A" } },
+            syncStatus === "syncing" ? "Syncing..." : syncStatus === "pushed" ? "Progress pushed to GitHub" : syncStatus === "pulled" ? "Progress pulled from GitHub" : syncStatus === "error" ? "Sync failed \u2014 check token" : syncStatus === "no-remote" ? "No remote progress found" : ""
+          )
+        )
       )
     ),
 
@@ -2973,6 +3087,11 @@ const s = {
   phaseTab: { flex: 1, padding: "10px 0", border: "none", background: "transparent", color: "#6B7C93", cursor: "pointer", fontSize: 13, fontWeight: 600, fontFamily: "'Source Serif 4', serif", borderBottom: "2px solid transparent", transition: "all 0.2s", textAlign: "center" },
   phaseTabActive: { color: "#E8D5B7", borderBottomColor: "#D4A574" },
   moduleList: { flex: 1, overflowY: "auto", padding: "12px 12px" },
+  syncSection: { padding: "12px 16px", borderTop: "1px solid #1E2D3D" },
+  syncButton: { width: "100%", padding: "8px", border: "1px solid #1E2D3D", background: "transparent", color: "#6B7C93", borderRadius: 6, cursor: "pointer", fontSize: 12, fontFamily: "'Fira Code', monospace", transition: "all 0.2s" },
+  syncPanel: { padding: "4px 0" },
+  syncInput: { width: "100%", padding: "8px", border: "1px solid #2A3A4C", background: "#0F1923", color: "#C8D6E5", borderRadius: 6, fontSize: 12, fontFamily: "'Fira Code', monospace", outline: "none" },
+  syncActionBtn: { padding: "6px 10px", border: "1px solid #2A3A4C", background: "transparent", color: "#8899AA", borderRadius: 4, cursor: "pointer", fontSize: 11, fontFamily: "'Fira Code', monospace" },
   moduleItem: { display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", padding: "12px 14px", border: "none", background: "transparent", cursor: "pointer", borderRadius: 8, marginBottom: 2, textAlign: "left", transition: "background 0.2s" },
   moduleItemActive: { background: "#1A2736" },
   moduleItemLeft: { display: "flex", alignItems: "center", gap: 12 },
