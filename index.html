@@ -1858,6 +1858,8 @@ function AILeadershipCourse() {
     });
   };
 
+  const phaseModules = modules.filter(m => m.phase === activePhase);
+
   const totalSections = phaseModules.length;
   const completedCount = phaseModules.filter((m, mi) => {
     const globalIdx = modules.indexOf(m);
@@ -1865,7 +1867,6 @@ function AILeadershipCourse() {
   }).length;
   const pct = Math.round((completedCount / totalSections) * 100);
 
-  const phaseModules = modules.filter(m => m.phase === activePhase);
   const mod = phaseModules[activeModule];
   const sec = !quizMode ? mod.sections[activeSection] : null;
 
