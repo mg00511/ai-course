@@ -2681,7 +2681,17 @@ function AILeadershipCourse() {
   const [syncToken, setSyncToken] = useState("");
   const [syncStatus, setSyncStatus] = useState("");
   const [showSync, setShowSync] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
   const contentRef = useRef(null);
+
+  useEffect(() => {
+    try {
+      var dm = localStorage.getItem("ai-course-darkmode");
+      if (dm !== null) setDarkMode(dm === "true");
+    } catch(e) {}
+  }, []);
+
+  var s = getStyles(darkMode);
 
   useEffect(() => {
     try {
@@ -2857,7 +2867,7 @@ function AILeadershipCourse() {
       const trimmed = line.trim();
       if (!trimmed) return React.createElement("div", { key: i, style: { height: 12 } });
       if (trimmed.startsWith("**") && trimmed.endsWith("**")) {
-        return React.createElement("p", { key: i, style: Object.assign({}, s.bodyText, { fontWeight: 700, color: "#C8D6E5" }) }, trimmed.replace(/\*\*/g, ""));
+        return React.createElement("p", { key: i, style: Object.assign({}, s.bodyText, { fontWeight: 700, color: darkMode ? "#C8D6E5" : "#302A22" }) }, trimmed.replace(/\*\*/g, ""));
       }
       if (trimmed.startsWith("•") || trimmed.startsWith("- ")) {
         const content = trimmed.replace(/^[•\-]\s*/, "");
@@ -2874,7 +2884,7 @@ function AILeadershipCourse() {
     const parts = text.split(/(\*\*[^*]+\*\*)/g);
     return parts.map((part, i) => {
       if (part.startsWith("**") && part.endsWith("**")) {
-        return React.createElement("span", { key: i, style: { fontWeight: 700, color: "#E8D5B7" } }, part.slice(2, -2));
+        return React.createElement("span", { key: i, style: { fontWeight: 700, color: darkMode ? "#E8D5B7" : "#7A5520" } }, part.slice(2, -2));
       }
       return React.createElement("span", { key: i }, part);
     });
@@ -2891,6 +2901,11 @@ function AILeadershipCourse() {
         React.createElement("div", null,
           React.createElement("div", { style: s.courseTitle }, "AI Leadership"),
           React.createElement("div", { style: s.courseSubtitle }, "Executive Course")
+        ),
+        React.createElement("button", {
+          onClick: () => { var next = !darkMode; setDarkMode(next); localStorage.setItem("ai-course-darkmode", String(next)); },
+          style: s.themeToggle
+        }, darkMode ? "☀" : "☽"
         )
       ),
       React.createElement("div", { style: s.progressSection },
@@ -2933,9 +2948,9 @@ function AILeadershipCourse() {
             style: Object.assign({}, s.moduleItem, isActive ? s.moduleItemActive : {})
           },
             React.createElement("div", { style: s.moduleItemLeft },
-              React.createElement("span", { style: Object.assign({}, s.moduleIcon, { color: allDone ? "#5CB88A" : isActive ? "#E8D5B7" : "#6B7C93" }) }, allDone ? "✓" : m.icon),
+              React.createElement("span", { style: Object.assign({}, s.moduleIcon, { color: allDone ? "#5CB88A" : isActive ? (darkMode ? "#E8D5B7" : "#7A5520") : (darkMode ? "#6B7C93" : "#8A8480") }) }, allDone ? "✓" : m.icon),
               React.createElement("div", null,
-                React.createElement("div", { style: Object.assign({}, s.moduleItemTitle, { color: isActive ? "#E8D5B7" : "#C8D6E5" }) }, m.title),
+                React.createElement("div", { style: Object.assign({}, s.moduleItemTitle, { color: isActive ? (darkMode ? "#E8D5B7" : "#7A5520") : (darkMode ? "#C8D6E5" : "#302A22") }) }, m.title),
                 React.createElement("div", { style: s.moduleItemMeta }, (allDone ? "Quiz passed" : "Quiz pending") + " · " + m.estimatedMinutes + " min")
               )
             )
@@ -2985,7 +3000,7 @@ function AILeadershipCourse() {
               onClick: () => { setActiveSection(si); setQuizMode(false); },
               style: Object.assign({}, s.sectionTab, !quizMode && si === activeSection ? s.sectionTabActive : {})
             },
-              React.createElement("span", { style: Object.assign({}, s.sectionTabDot, { backgroundColor: !quizMode && si === activeSection ? "#E8D5B7" : "#3A4A5C" }) }),
+              React.createElement("span", { style: Object.assign({}, s.sectionTabDot, { backgroundColor: !quizMode && si === activeSection ? (darkMode ? "#E8D5B7" : "#7A5520") : (darkMode ? "#3A4A5C" : "#C5C0B6") }) }),
               sc.heading
             )
           ),
@@ -2993,7 +3008,7 @@ function AILeadershipCourse() {
             onClick: () => setQuizMode(true),
             style: Object.assign({}, s.sectionTab, quizMode ? s.sectionTabQuizActive : {})
           },
-            React.createElement("span", { style: Object.assign({}, s.sectionTabDot, { backgroundColor: isQuizCompleted(modules.indexOf(phaseModules[activeModule])) ? "#5CB88A" : quizMode ? "#C89B6E" : "#3A4A5C" }) }),
+            React.createElement("span", { style: Object.assign({}, s.sectionTabDot, { backgroundColor: isQuizCompleted(modules.indexOf(phaseModules[activeModule])) ? "#5CB88A" : quizMode ? "#C89B6E" : (darkMode ? "#3A4A5C" : "#C5C0B6") }) }),
             "Quiz"
           )
         ),
@@ -3054,76 +3069,97 @@ function AILeadershipCourse() {
   );
 }
 
-const s = {
-  root: { display: "flex", height: "100vh", fontFamily: "'Source Serif 4', Georgia, 'Palatino Linotype', serif", backgroundColor: "#0F1923", color: "#A4B3C4", overflow: "hidden", position: "relative" },
-  sidebar: { width: 320, minWidth: 320, backgroundColor: "#141E2B", borderRight: "1px solid #1E2D3D", display: "flex", flexDirection: "column", overflow: "hidden", transition: "transform 0.3s ease" },
-  sidebarHeader: { padding: "28px 24px 20px", display: "flex", alignItems: "center", gap: 14, borderBottom: "1px solid #1E2D3D" },
-  logoMark: { width: 42, height: 42, borderRadius: 10, background: "linear-gradient(135deg, #D4A574, #B8956A)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 16, color: "#0F1923", fontFamily: "'Fira Code', monospace", letterSpacing: -1 },
-  courseTitle: { fontSize: 17, fontWeight: 700, color: "#E8ECF1", letterSpacing: -0.3 },
-  courseSubtitle: { fontSize: 12, color: "#6B7C93", marginTop: 2, fontFamily: "'Fira Code', monospace", textTransform: "uppercase", letterSpacing: 1.5 },
-  progressSection: { padding: "20px 24px", borderBottom: "1px solid #1E2D3D" },
-  progressLabel: { display: "flex", justifyContent: "space-between", fontSize: 12, color: "#6B7C93", marginBottom: 8, fontFamily: "'Fira Code', monospace" },
-  progressCount: { color: "#8899AA" },
-  progressBar: { height: 4, backgroundColor: "#1E2D3D", borderRadius: 2, overflow: "hidden" },
+function getStyles(dark) {
+  var bg = dark ? "#0F1923" : "#F8F6F2";
+  var bg2 = dark ? "#141E2B" : "#EFECE6";
+  var bg3 = dark ? "#1A2736" : "#E4E0D8";
+  var border = dark ? "#1E2D3D" : "#D5D0C8";
+  var border2 = dark ? "#2A3A4C" : "#C5C0B6";
+  var text = dark ? "#A4B3C4" : "#504A42";
+  var textStrong = dark ? "#C8D6E5" : "#302A22";
+  var textHeading = dark ? "#E8ECF1" : "#1A1510";
+  var textMuted = dark ? "#6B7C93" : "#8A8480";
+  var textFaint = dark ? "#4A5A6C" : "#AAA49E";
+  var accent = dark ? "#D4A574" : "#9A6B3A";
+  var accentBg = dark ? "rgba(212,165,116,0.08)" : "rgba(154,107,58,0.08)";
+  var accentText = dark ? "#E8D5B7" : "#7A5520";
+  var green = "#5CB88A";
+  var red = dark ? "#D4766A" : "#C0504A";
+  var inputBg = dark ? "#0F1923" : "#FFFFFF";
+  var quizBg = dark ? "#141E2B" : "#FFFFFF";
+  var explBg = dark ? "rgba(15,25,35,0.6)" : "rgba(240,237,230,0.8)";
+  var primaryBtnText = dark ? "#0F1923" : "#FFFFFF";
+  return {
+  root: { display: "flex", height: "100vh", fontFamily: "'Source Serif 4', Georgia, 'Palatino Linotype', serif", backgroundColor: bg, color: text, overflow: "hidden", position: "relative" },
+  sidebar: { width: 320, minWidth: 320, backgroundColor: bg2, borderRight: "1px solid " + border, display: "flex", flexDirection: "column", overflow: "hidden", transition: "transform 0.3s ease" },
+  sidebarHeader: { padding: "28px 24px 20px", display: "flex", alignItems: "center", gap: 14, borderBottom: "1px solid " + border },
+  logoMark: { width: 42, height: 42, borderRadius: 10, background: "linear-gradient(135deg, #D4A574, #B8956A)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 800, fontSize: 16, color: primaryBtnText, fontFamily: "'Fira Code', monospace", letterSpacing: -1 },
+  courseTitle: { fontSize: 17, fontWeight: 700, color: textHeading, letterSpacing: -0.3 },
+  courseSubtitle: { fontSize: 12, color: textMuted, marginTop: 2, fontFamily: "'Fira Code', monospace", textTransform: "uppercase", letterSpacing: 1.5 },
+  progressSection: { padding: "20px 24px", borderBottom: "1px solid " + border },
+  progressLabel: { display: "flex", justifyContent: "space-between", fontSize: 12, color: textMuted, marginBottom: 8, fontFamily: "'Fira Code', monospace" },
+  progressCount: { color: textMuted },
+  progressBar: { height: 4, backgroundColor: border, borderRadius: 2, overflow: "hidden" },
   progressFill: { height: "100%", background: "linear-gradient(90deg, #D4A574, #5CB88A)", borderRadius: 2, transition: "width 0.5s ease" },
-  totalTime: { fontSize: 11, color: "#4A5A6C", marginTop: 8, fontFamily: "'Fira Code', monospace" },
-  phaseTabs: { display: "flex", gap: 6, padding: "12px 24px 0", borderBottom: "1px solid #1E2D3D" },
-  phaseTab: { flex: 1, padding: "10px 0", border: "none", background: "transparent", color: "#6B7C93", cursor: "pointer", fontSize: 13, fontWeight: 600, fontFamily: "'Source Serif 4', serif", borderBottom: "2px solid transparent", transition: "all 0.2s", textAlign: "center" },
-  phaseTabActive: { color: "#E8D5B7", borderBottomColor: "#D4A574" },
+  totalTime: { fontSize: 11, color: textFaint, marginTop: 8, fontFamily: "'Fira Code', monospace" },
+  phaseTabs: { display: "flex", gap: 6, padding: "12px 24px 0", borderBottom: "1px solid " + border },
+  phaseTab: { flex: 1, padding: "10px 0", border: "none", background: "transparent", color: textMuted, cursor: "pointer", fontSize: 13, fontWeight: 600, fontFamily: "'Source Serif 4', serif", borderBottom: "2px solid transparent", transition: "all 0.2s", textAlign: "center" },
+  phaseTabActive: { color: accentText, borderBottomColor: accent },
   moduleList: { flex: 1, overflowY: "auto", padding: "12px 12px" },
-  syncSection: { padding: "12px 16px", borderTop: "1px solid #1E2D3D" },
-  syncButton: { width: "100%", padding: "8px", border: "1px solid #1E2D3D", background: "transparent", color: "#6B7C93", borderRadius: 6, cursor: "pointer", fontSize: 12, fontFamily: "'Fira Code', monospace", transition: "all 0.2s" },
+  syncSection: { padding: "12px 16px", borderTop: "1px solid " + border },
+  syncButton: { width: "100%", padding: "8px", border: "1px solid " + border, background: "transparent", color: textMuted, borderRadius: 6, cursor: "pointer", fontSize: 12, fontFamily: "'Fira Code', monospace", transition: "all 0.2s" },
   syncPanel: { padding: "4px 0" },
-  syncInput: { width: "100%", padding: "8px", border: "1px solid #2A3A4C", background: "#0F1923", color: "#C8D6E5", borderRadius: 6, fontSize: 12, fontFamily: "'Fira Code', monospace", outline: "none" },
-  syncActionBtn: { padding: "6px 10px", border: "1px solid #2A3A4C", background: "transparent", color: "#8899AA", borderRadius: 4, cursor: "pointer", fontSize: 11, fontFamily: "'Fira Code', monospace" },
+  syncInput: { width: "100%", padding: "8px", border: "1px solid " + border2, background: inputBg, color: textStrong, borderRadius: 6, fontSize: 12, fontFamily: "'Fira Code', monospace", outline: "none" },
+  syncActionBtn: { padding: "6px 10px", border: "1px solid " + border2, background: "transparent", color: textMuted, borderRadius: 4, cursor: "pointer", fontSize: 11, fontFamily: "'Fira Code', monospace" },
+  themeToggle: { padding: "6px 10px", border: "1px solid " + border, background: "transparent", color: textMuted, borderRadius: 6, cursor: "pointer", fontSize: 14, lineHeight: 1, transition: "all 0.2s" },
   moduleItem: { display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", padding: "12px 14px", border: "none", background: "transparent", cursor: "pointer", borderRadius: 8, marginBottom: 2, textAlign: "left", transition: "background 0.2s" },
-  moduleItemActive: { background: "#1A2736" },
+  moduleItemActive: { background: bg3 },
   moduleItemLeft: { display: "flex", alignItems: "center", gap: 12 },
   moduleIcon: { fontSize: 18, width: 24, textAlign: "center", flexShrink: 0 },
   moduleItemTitle: { fontSize: 13, fontWeight: 600, lineHeight: 1.3, fontFamily: "'Source Serif 4', Georgia, serif" },
-  moduleItemMeta: { fontSize: 11, color: "#4A5A6C", marginTop: 2, fontFamily: "'Fira Code', monospace" },
+  moduleItemMeta: { fontSize: 11, color: textFaint, marginTop: 2, fontFamily: "'Fira Code', monospace" },
   main: { flex: 1, overflowY: "auto", scrollBehavior: "smooth" },
   contentContainer: { maxWidth: 760, margin: "0 auto", padding: "48px 40px 80px" },
-  moduleHeader: { marginBottom: 36, paddingBottom: 32, borderBottom: "1px solid #1E2D3D" },
-  moduleNumber: { fontSize: 11, color: "#D4A574", fontFamily: "'Fira Code', monospace", textTransform: "uppercase", letterSpacing: 2, marginBottom: 12 },
-  moduleTitle: { fontSize: 36, fontWeight: 700, color: "#E8ECF1", lineHeight: 1.15, letterSpacing: -0.5, margin: 0 },
-  moduleSubtitle: { fontSize: 18, color: "#6B7C93", marginTop: 10, fontStyle: "italic" },
+  moduleHeader: { marginBottom: 36, paddingBottom: 32, borderBottom: "1px solid " + border },
+  moduleNumber: { fontSize: 11, color: accent, fontFamily: "'Fira Code', monospace", textTransform: "uppercase", letterSpacing: 2, marginBottom: 12 },
+  moduleTitle: { fontSize: 36, fontWeight: 700, color: textHeading, lineHeight: 1.15, letterSpacing: -0.5, margin: 0 },
+  moduleSubtitle: { fontSize: 18, color: textMuted, marginTop: 10, fontStyle: "italic" },
   sectionTabs: { display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 36 },
-  sectionTab: { display: "flex", alignItems: "center", gap: 8, padding: "8px 16px", border: "1px solid #1E2D3D", background: "transparent", color: "#8899AA", borderRadius: 20, cursor: "pointer", fontSize: 13, fontFamily: "'Source Serif 4', serif", transition: "all 0.2s" },
-  sectionTabActive: { borderColor: "#D4A574", color: "#E8D5B7", background: "rgba(212, 165, 116, 0.08)" },
-  sectionTabQuizActive: { borderColor: "#C89B6E", color: "#E8D5B7", background: "rgba(200, 155, 110, 0.12)" },
+  sectionTab: { display: "flex", alignItems: "center", gap: 8, padding: "8px 16px", border: "1px solid " + border, background: "transparent", color: textMuted, borderRadius: 20, cursor: "pointer", fontSize: 13, fontFamily: "'Source Serif 4', serif", transition: "all 0.2s" },
+  sectionTabActive: { borderColor: accent, color: accentText, background: accentBg },
+  sectionTabQuizActive: { borderColor: accent, color: accentText, background: accentBg },
   sectionTabDot: { width: 7, height: 7, borderRadius: "50%", flexShrink: 0 },
   sectionContent: { marginBottom: 48 },
-  sectionHeading: { fontSize: 24, fontWeight: 700, color: "#E8ECF1", marginBottom: 24, letterSpacing: -0.3 },
+  sectionHeading: { fontSize: 24, fontWeight: 700, color: textHeading, marginBottom: 24, letterSpacing: -0.3 },
   sectionBody: {},
-  bodyText: { fontSize: 16, lineHeight: 1.75, color: "#A4B3C4", marginBottom: 6 },
-  bullet: { display: "flex", gap: 10, fontSize: 16, lineHeight: 1.75, color: "#A4B3C4", marginBottom: 4, paddingLeft: 4 },
-  bulletDot: { color: "#D4A574", fontWeight: 700, flexShrink: 0, marginTop: 1 },
-  bottomActions: { display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: 32, borderTop: "1px solid #1E2D3D", flexWrap: "wrap", gap: 16 },
-  completeBtn: { padding: "10px 24px", borderRadius: 8, border: "1px solid #2A3A4C", background: "transparent", color: "#8899AA", cursor: "pointer", fontSize: 14, fontFamily: "'Fira Code', monospace", transition: "all 0.2s" },
-  completeBtnDone: { borderColor: "#5CB88A", color: "#5CB88A", background: "rgba(92, 184, 138, 0.08)" },
+  bodyText: { fontSize: 16, lineHeight: 1.75, color: text, marginBottom: 6 },
+  bullet: { display: "flex", gap: 10, fontSize: 16, lineHeight: 1.75, color: text, marginBottom: 4, paddingLeft: 4 },
+  bulletDot: { color: accent, fontWeight: 700, flexShrink: 0, marginTop: 1 },
+  bottomActions: { display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: 32, borderTop: "1px solid " + border, flexWrap: "wrap", gap: 16 },
+  completeBtn: { padding: "10px 24px", borderRadius: 8, border: "1px solid " + border2, background: "transparent", color: textMuted, cursor: "pointer", fontSize: 14, fontFamily: "'Fira Code', monospace", transition: "all 0.2s" },
+  completeBtnDone: { borderColor: green, color: green, background: "rgba(92, 184, 138, 0.08)" },
   navButtons: { display: "flex", gap: 10, alignItems: "center" },
-  navBtn: { padding: "10px 20px", borderRadius: 8, border: "1px solid #2A3A4C", background: "transparent", color: "#8899AA", cursor: "pointer", fontSize: 14, fontFamily: "'Source Serif 4', serif", transition: "all 0.2s" },
-  navBtnPrimary: { background: "linear-gradient(135deg, #D4A574, #B8956A)", color: "#0F1923", fontWeight: 700, border: "none" },
-  finishLabel: { fontSize: 14, color: "#5CB88A", fontFamily: "'Fira Code', monospace" },
+  navBtn: { padding: "10px 20px", borderRadius: 8, border: "1px solid " + border2, background: "transparent", color: textMuted, cursor: "pointer", fontSize: 14, fontFamily: "'Source Serif 4', serif", transition: "all 0.2s" },
+  navBtnPrimary: { background: "linear-gradient(135deg, #D4A574, #B8956A)", color: primaryBtnText, fontWeight: 700, border: "none" },
+  finishLabel: { fontSize: 14, color: green, fontFamily: "'Fira Code', monospace" },
   quizIntro: { marginBottom: 32 },
-  quizQuestion: { marginBottom: 40, padding: 28, backgroundColor: "#141E2B", borderRadius: 12, border: "1px solid #1E2D3D" },
-  quizQuestionNumber: { fontSize: 11, color: "#D4A574", fontFamily: "'Fira Code', monospace", textTransform: "uppercase", letterSpacing: 2, marginBottom: 14 },
-  quizScenario: { fontSize: 16, lineHeight: 1.7, color: "#C8D6E5", marginBottom: 20, fontStyle: "italic" },
+  quizQuestion: { marginBottom: 40, padding: 28, backgroundColor: quizBg, borderRadius: 12, border: "1px solid " + border },
+  quizQuestionNumber: { fontSize: 11, color: accent, fontFamily: "'Fira Code', monospace", textTransform: "uppercase", letterSpacing: 2, marginBottom: 14 },
+  quizScenario: { fontSize: 16, lineHeight: 1.7, color: textStrong, marginBottom: 20, fontStyle: "italic" },
   quizOptions: { display: "flex", flexDirection: "column", gap: 10 },
-  quizOption: { display: "flex", alignItems: "flex-start", gap: 14, padding: "14px 18px", border: "1px solid #2A3A4C", background: "transparent", borderRadius: 10, cursor: "pointer", textAlign: "left", transition: "all 0.2s", color: "#A4B3C4" },
-  quizOptionSelected: { borderColor: "#D4A574", background: "rgba(212, 165, 116, 0.06)", color: "#E8D5B7" },
-  quizOptionCorrect: { borderColor: "#5CB88A", background: "rgba(92, 184, 138, 0.1)", color: "#A8DFC4", cursor: "default" },
-  quizOptionWrong: { borderColor: "#D4766A", background: "rgba(212, 118, 106, 0.1)", color: "#E0A8A2", cursor: "default" },
+  quizOption: { display: "flex", alignItems: "flex-start", gap: 14, padding: "14px 18px", border: "1px solid " + border2, background: "transparent", borderRadius: 10, cursor: "pointer", textAlign: "left", transition: "all 0.2s", color: text },
+  quizOptionSelected: { borderColor: accent, background: accentBg, color: accentText },
+  quizOptionCorrect: { borderColor: green, background: "rgba(92, 184, 138, 0.1)", color: dark ? "#A8DFC4" : "#2A7A50", cursor: "default" },
+  quizOptionWrong: { borderColor: red, background: dark ? "rgba(212, 118, 106, 0.1)" : "rgba(192, 80, 74, 0.1)", color: dark ? "#E0A8A2" : "#9A3A34", cursor: "default" },
   quizOptionDimmed: { opacity: 0.35, cursor: "default" },
-  quizOptionLetter: { fontFamily: "'Fira Code', monospace", fontSize: 13, fontWeight: 700, color: "#6B7C93", minWidth: 22, paddingTop: 2 },
+  quizOptionLetter: { fontFamily: "'Fira Code', monospace", fontSize: 13, fontWeight: 700, color: textMuted, minWidth: 22, paddingTop: 2 },
   quizOptionText: { fontSize: 14, lineHeight: 1.65, fontFamily: "'Source Serif 4', serif" },
-  revealBtn: { marginTop: 16, padding: "10px 24px", borderRadius: 8, border: "1px solid #D4A574", background: "rgba(212, 165, 116, 0.08)", color: "#E8D5B7", cursor: "pointer", fontSize: 14, fontFamily: "'Fira Code', monospace" },
-  quizExplanation: { marginTop: 18, padding: 20, borderLeft: "3px solid", backgroundColor: "rgba(15, 25, 35, 0.6)", borderRadius: "0 8px 8px 0" },
+  revealBtn: { marginTop: 16, padding: "10px 24px", borderRadius: 8, border: "1px solid " + accent, background: accentBg, color: accentText, cursor: "pointer", fontSize: 14, fontFamily: "'Fira Code', monospace" },
+  quizExplanation: { marginTop: 18, padding: 20, borderLeft: "3px solid", backgroundColor: explBg, borderRadius: "0 8px 8px 0" },
   quizPassBanner: { padding: "16px 20px", borderRadius: 10, border: "1px solid", display: "flex", flexDirection: "column", alignItems: "flex-start", fontFamily: "'Fira Code', monospace", fontSize: 14 },
   quizResultLabel: { fontSize: 13, fontWeight: 700, fontFamily: "'Fira Code', monospace", marginBottom: 10 }
 };
-
+}
 ReactDOM.render(React.createElement(AILeadershipCourse), document.getElementById("root"));
   </script>
 </body>
