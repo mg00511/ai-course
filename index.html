@@ -2901,11 +2901,6 @@ function AILeadershipCourse() {
         React.createElement("div", null,
           React.createElement("div", { style: s.courseTitle }, "AI Leadership"),
           React.createElement("div", { style: s.courseSubtitle }, "Executive Course")
-        ),
-        React.createElement("button", {
-          onClick: () => { var next = !darkMode; setDarkMode(next); localStorage.setItem("ai-course-darkmode", String(next)); },
-          style: s.themeToggle
-        }, darkMode ? "☀" : "☽"
         )
       ),
       React.createElement("div", { style: s.progressSection },
@@ -2958,10 +2953,20 @@ function AILeadershipCourse() {
         })
       ),
       React.createElement("div", { style: s.syncSection },
-        !showSync ? React.createElement("button", {
-          onClick: () => setShowSync(true),
-          style: s.syncButton
-        }, localStorage.getItem(ghTokenKey) ? "\u2713 Sync enabled" : "\u2601 Enable sync") : React.createElement("div", { style: s.syncPanel },
+        React.createElement("div", { style: { display: "flex", gap: 8, alignItems: "center" } },
+          !showSync ? React.createElement("button", {
+            onClick: () => setShowSync(true),
+            style: Object.assign({}, s.syncButton, { flex: 1 })
+          }, localStorage.getItem(ghTokenKey) ? "\u2713 Sync" : "\u2601 Sync") : React.createElement("button", {
+            onClick: () => setShowSync(false),
+            style: Object.assign({}, s.syncButton, { flex: 1 })
+          }, "\u2715 Close sync"),
+          React.createElement("button", {
+            onClick: () => { var next = !darkMode; setDarkMode(next); localStorage.setItem("ai-course-darkmode", String(next)); },
+            style: s.themeToggle
+          }, darkMode ? "\u2600" : "\u263D")
+        ),
+        showSync && React.createElement("div", { style: Object.assign({}, s.syncPanel, { marginTop: 10 }) },
           React.createElement("div", { style: { fontSize: 12, color: "#6B7C93", marginBottom: 8, fontFamily: "'Fira Code', monospace" } }, "GitHub token (repo scope):"),
           React.createElement("input", {
             type: "password",
@@ -2972,8 +2977,7 @@ function AILeadershipCourse() {
           }),
           React.createElement("div", { style: { display: "flex", gap: 6, marginTop: 8 } },
             React.createElement("button", { onClick: handleSyncSetup, style: s.syncActionBtn }, "Save & Sync"),
-            React.createElement("button", { onClick: handleSyncPull, style: s.syncActionBtn }, "Pull"),
-            React.createElement("button", { onClick: () => setShowSync(false), style: Object.assign({}, s.syncActionBtn, { color: "#6B7C93" }) }, "\u2715")
+            React.createElement("button", { onClick: handleSyncPull, style: s.syncActionBtn }, "Pull")
           ),
           syncStatus && React.createElement("div", { style: { fontSize: 11, marginTop: 6, fontFamily: "'Fira Code', monospace", color: syncStatus === "error" ? "#D4766A" : "#5CB88A" } },
             syncStatus === "syncing" ? "Syncing..." : syncStatus === "pushed" ? "Progress pushed to GitHub" : syncStatus === "pulled" ? "Progress pulled from GitHub" : syncStatus === "error" ? "Sync failed \u2014 check token" : syncStatus === "no-remote" ? "No remote progress found" : ""
