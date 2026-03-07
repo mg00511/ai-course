@@ -525,62 +525,6 @@ The key distinction is **autonomy in decision-making**. Agents choose their own 
     ]
   },
   {
-    id: 6,
-    phase: 1,
-    title: "Protocols & Interoperability",
-    subtitle: "MCP, A2A, and the emerging agent ecosystem",
-    icon: "◎",
-    estimatedMinutes: 6,
-    sections: [
-      {
-        heading: "Model Context Protocol (MCP)",
-        content: `MCP, created by Anthropic and now adopted across the industry, standardizes how AI models access external tools and data sources. Think of it as "USB-C for AI integrations."
-
-**The problem it solves:** Without MCP, every AI application needs custom code to connect to each tool. Want your agent to query a database, call an API, and read files? That's three custom integrations. Want to switch from one LLM to another? Rewrite the integrations. MCP creates a standard interface so tools are built once and work with any MCP-compatible AI system.
-
-**How it works:** An MCP server exposes tools (functions the AI can call), resources (data the AI can read), and prompts (templated interactions). An MCP client inside the AI application discovers what's available and uses it. The AI model decides when and how to use these capabilities based on the user's request.
-
-**Current adoption (mid-2025):** MCP has moved from proposal to production standard rapidly. OpenAI, Google, and Microsoft have all adopted MCP support. Major enterprise tools (Slack, GitHub, Jira, Salesforce, databases) now have MCP servers. Claude, ChatGPT, Cursor, Windsurf, and dozens of AI coding agents use MCP natively. This is no longer a speculative bet — it's the emerging standard your architecture should target.
-
-**Why this matters strategically:** MCP determines whether your AI systems are open or closed. If you build MCP-compatible tools, any AI system can use them. If you build proprietary integrations, you're locked into specific models and frameworks. For a platform company, this is a significant architectural decision — do you want third-party agents to interact with your merchant services through a standard protocol?`
-      },
-      {
-        heading: "Agent-to-Agent Protocol (A2A)",
-        content: `A2A, developed by Google (now merged with IBM's ACP protocol), standardizes how AI agents communicate with each other — even when they're built on different frameworks by different teams.
-
-**The problem it solves:** In a multi-agent system, Agent A (built with LangGraph) needs to delegate a task to Agent B (built with CrewAI). Without a standard protocol, this requires custom integration code. A2A provides a standard way for agents to discover each other's capabilities, send task requests, receive results, and handle errors.
-
-**MCP vs. A2A — the key distinction:** MCP is about how an agent connects to tools and data (agent-to-tool). A2A is about how agents communicate with each other (agent-to-agent). They're complementary, not competing. A well-designed system uses MCP for tool access and A2A for agent orchestration.
-
-**Why this matters for platform companies:** A2A enables a future where merchants could have their own AI agents that communicate with your platform's agents through a standard protocol. A merchant's inventory agent could coordinate with a payment optimization agent and a fraud detection agent — potentially built by different vendors. This is the "agentic commerce" vision, and these protocols are the plumbing that makes it possible.`
-      }
-    ],
-    quiz: [
-      {
-        scenario: "Custom integrations between your agent and 5 APIs. Switching LLM providers takes 3 weeks to rewrite. What would have prevented this?",
-        options: [
-          "Using LangChain to abstract the model layer so tool calls are framework-independent",
-          "Designing a proprietary abstraction layer that normalizes function-calling across providers",
-          "Building integrations as MCP servers — standardized tool interfaces work with any compatible model",
-          "Staying with one provider long-term with a committed-use contract for stability"
-        ],
-        correct: 2,
-        explanation: "MCP's core value: build integrations once, use with any MCP-compatible system. Custom integrations create model lock-in through provider-specific function-calling formats. LangChain offers some abstraction, but MCP is the emerging open standard for tool interoperability."
-      },
-      {
-        scenario: "VP asks: 'Should we expose merchant APIs as MCP servers so any AI agent — including third-party ones — can use our platform?' Most important consideration?",
-        options: [
-          "Engineering cost and timeline for building production-grade MCP servers across all merchant APIs",
-          "Whether your security and authentication infrastructure can support MCP protocol requirements",
-          "Whether MCP is technically mature enough for enterprise-scale production with financial data",
-          "It's a platform strategy decision — more ecosystem value but lower switching costs and competitor access"
-        ],
-        correct: 3,
-        explanation: "Business strategy disguised as technical question. Same open-vs-closed platform dilemma as any API decision. Open APIs grow ecosystems but reduce lock-in. The answer depends on competitive position and data advantages, not technical maturity or engineering cost."
-      }
-    ]
-  },
-  {
     id: 7,
     phase: 1,
     title: "Evaluation & Measurement",
@@ -667,6 +611,62 @@ The key distinction is **autonomy in decision-making**. Agents choose their own 
         ],
         correct: 1,
         explanation: "Model updates are expected with hosted AI. The systemic failure is absence of continuous automated evaluation catching regressions before users do. Pinning versions is a mitigation but doesn't solve the eval gap. Resilient parsing is good but doesn't address broader monitoring."
+      }
+    ]
+  },
+  {
+    id: 6,
+    phase: 1,
+    title: "Protocols & Interoperability",
+    subtitle: "MCP, A2A, and the emerging agent ecosystem",
+    icon: "◎",
+    estimatedMinutes: 6,
+    sections: [
+      {
+        heading: "Model Context Protocol (MCP)",
+        content: `MCP, created by Anthropic and now adopted across the industry, standardizes how AI models access external tools and data sources. Think of it as "USB-C for AI integrations."
+
+**The problem it solves:** Without MCP, every AI application needs custom code to connect to each tool. Want your agent to query a database, call an API, and read files? That's three custom integrations. Want to switch from one LLM to another? Rewrite the integrations. MCP creates a standard interface so tools are built once and work with any MCP-compatible AI system.
+
+**How it works:** An MCP server exposes tools (functions the AI can call), resources (data the AI can read), and prompts (templated interactions). An MCP client inside the AI application discovers what's available and uses it. The AI model decides when and how to use these capabilities based on the user's request.
+
+**Current adoption (mid-2025):** MCP has moved from proposal to production standard rapidly. OpenAI, Google, and Microsoft have all adopted MCP support. Major enterprise tools (Slack, GitHub, Jira, Salesforce, databases) now have MCP servers. Claude, ChatGPT, Cursor, Windsurf, and dozens of AI coding agents use MCP natively. This is no longer a speculative bet — it's the emerging standard your architecture should target.
+
+**Why this matters strategically:** MCP determines whether your AI systems are open or closed. If you build MCP-compatible tools, any AI system can use them. If you build proprietary integrations, you're locked into specific models and frameworks. For a platform company, this is a significant architectural decision — do you want third-party agents to interact with your merchant services through a standard protocol?`
+      },
+      {
+        heading: "Agent-to-Agent Protocol (A2A)",
+        content: `A2A, developed by Google (now merged with IBM's ACP protocol), standardizes how AI agents communicate with each other — even when they're built on different frameworks by different teams.
+
+**The problem it solves:** In a multi-agent system, Agent A (built with LangGraph) needs to delegate a task to Agent B (built with CrewAI). Without a standard protocol, this requires custom integration code. A2A provides a standard way for agents to discover each other's capabilities, send task requests, receive results, and handle errors.
+
+**MCP vs. A2A — the key distinction:** MCP is about how an agent connects to tools and data (agent-to-tool). A2A is about how agents communicate with each other (agent-to-agent). They're complementary, not competing. A well-designed system uses MCP for tool access and A2A for agent orchestration.
+
+**Why this matters for platform companies:** A2A enables a future where merchants could have their own AI agents that communicate with your platform's agents through a standard protocol. A merchant's inventory agent could coordinate with a payment optimization agent and a fraud detection agent — potentially built by different vendors. This is the "agentic commerce" vision, and these protocols are the plumbing that makes it possible.`
+      }
+    ],
+    quiz: [
+      {
+        scenario: "Custom integrations between your agent and 5 APIs. Switching LLM providers takes 3 weeks to rewrite. What would have prevented this?",
+        options: [
+          "Using LangChain to abstract the model layer so tool calls are framework-independent",
+          "Designing a proprietary abstraction layer that normalizes function-calling across providers",
+          "Building integrations as MCP servers — standardized tool interfaces work with any compatible model",
+          "Staying with one provider long-term with a committed-use contract for stability"
+        ],
+        correct: 2,
+        explanation: "MCP's core value: build integrations once, use with any MCP-compatible system. Custom integrations create model lock-in through provider-specific function-calling formats. LangChain offers some abstraction, but MCP is the emerging open standard for tool interoperability."
+      },
+      {
+        scenario: "VP asks: 'Should we expose merchant APIs as MCP servers so any AI agent — including third-party ones — can use our platform?' Most important consideration?",
+        options: [
+          "Engineering cost and timeline for building production-grade MCP servers across all merchant APIs",
+          "Whether your security and authentication infrastructure can support MCP protocol requirements",
+          "Whether MCP is technically mature enough for enterprise-scale production with financial data",
+          "It's a platform strategy decision — more ecosystem value but lower switching costs and competitor access"
+        ],
+        correct: 3,
+        explanation: "Business strategy disguised as technical question. Same open-vs-closed platform dilemma as any API decision. Open APIs grow ecosystems but reduce lock-in. The answer depends on competitive position and data advantages, not technical maturity or engineering cost."
       }
     ]
   },
