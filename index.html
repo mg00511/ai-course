@@ -14,9 +14,10 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #2A3A4C; border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: #3A4A5C; }
-    button:focus { outline: none; }
+    button:focus { outline: none; border-color: transparent; box-shadow: none; text-decoration: none; }
+    button:active { outline: none; border-color: transparent; box-shadow: none; }
     button::-moz-focus-inner { border: 0; }
-    button:focus-visible { outline: none; box-shadow: none; }
+    button:focus-visible { outline: none; box-shadow: none; border-color: transparent; }
     @media (max-width: 800px) {
       #menu-toggle { display: flex !important; }
       #sidebar { position: fixed !important; z-index: 900; height: 100%; }
@@ -3532,8 +3533,8 @@ function getStyles(dark) {
   progressFill: { height: "100%", background: "linear-gradient(90deg, #D4A574, #5CB88A)", borderRadius: 2, transition: "width 0.5s ease" },
   totalTime: { fontSize: 11, color: textFaint, marginTop: 8, fontFamily: "'Fira Code', monospace" },
   phaseTabs: { display: "flex", gap: 6, padding: "12px 24px 0" },
-  phaseTab: { flex: 1, padding: "10px 0 2px", border: "none", background: "transparent", color: textMuted, cursor: "pointer", fontSize: 13, fontWeight: 600, fontFamily: "'Source Serif 4', serif", transition: "color 0.2s", textAlign: "center", outline: "none", WebkitAppearance: "none" },
-  phaseTabActive: { color: accentText, paddingBottom: 0, borderBottom: "2px solid " + accent },
+  phaseTab: { flex: 1, padding: "10px 0", border: "none", borderBottom: "2px solid " + bg2, background: "transparent", color: textMuted, cursor: "pointer", fontSize: 13, fontWeight: 600, fontFamily: "'Source Serif 4', serif", transition: "color 0.2s, border-color 0.2s", textAlign: "center", outline: "none", WebkitAppearance: "none" },
+  phaseTabActive: { color: accentText, borderBottom: "2px solid " + accent },
   moduleList: { flex: 1, overflowY: "auto", padding: "12px 12px" },
   syncSection: { padding: "12px 16px", borderTop: "1px solid " + border },
   syncButton: { width: "100%", padding: "8px", border: "1px solid " + border, background: "transparent", color: textMuted, borderRadius: 6, cursor: "pointer", fontSize: 12, fontFamily: "'Fira Code', monospace", transition: "all 0.2s" },
