@@ -122,7 +122,7 @@ Hallucinations are more likely when the model is asked about niche topics (less 
     title: "Prompt Engineering",
     subtitle: "The most underestimated engineering discipline",
     icon: "◇",
-    estimatedMinutes: 8,
+    estimatedMinutes: 10,
     sections: [
       {
         heading: "Why Prompt Engineering Is Engineering",
@@ -144,7 +144,9 @@ Hallucinations are more likely when the model is asked about niche topics (less 
 
 **A practical heuristic your teams should follow:** Always start with prompt engineering. If you can't achieve acceptable quality after serious prompt optimization (not 10 minutes of tinkering, but systematic testing across hundreds of examples), then escalate to RAG or fine-tuning. Teams that skip straight to complex architectures waste months building infrastructure they didn't need.
 
-**Your management principle:** Require teams to document their prompt engineering effort before proposing RAG or fine-tuning. Ask: how many prompt variations did you test? On how many examples? What was the best accuracy achieved? If the answer is vague, they haven't done the work yet.`
+**Your management principle:** Require teams to document their prompt engineering effort before proposing RAG or fine-tuning. Ask: how many prompt variations did you test? On how many examples? What was the best accuracy achieved? If the answer is vague, they haven't done the work yet.
+
+**A concrete scenario:** A team wants to build AI-powered merchant FAQ search. Start with prompting: give the LLM the merchant's question plus the top FAQ entries and ask it to answer. If accuracy is 85%+, ship it. If the model consistently misses because it doesn't have the right FAQs, add RAG to retrieve relevant entries. If the model's tone or format is wrong despite good prompts, consider fine-tuning. Each step is only justified by measured failure of the previous one.`
       }
     ],
     quiz: [
@@ -189,7 +191,7 @@ Hallucinations are more likely when the model is asked about niche topics (less 
     title: "RAG vs. Fine-Tuning vs. Prompting",
     subtitle: "The most common architectural decision you'll face",
     icon: "△",
-    estimatedMinutes: 8,
+    estimatedMinutes: 10,
     sections: [
       {
         heading: "The Decision Framework",
@@ -223,7 +225,9 @@ Hallucinations are more likely when the model is asked about niche topics (less 
 
 **Mistake 4: Not combining approaches.** The best production systems often use all three. A well-crafted system prompt sets the behavior, RAG retrieves the relevant context, and optionally a fine-tuned model handles the specialized generation. These aren't mutually exclusive.
 
-**Your question to ask teams:** "Walk me through why [chosen approach] is better than [alternatives] for this specific use case, and show me the evaluation data that supports the decision."`
+**Your question to ask teams:** "Walk me through why [chosen approach] is better than [alternatives] for this specific use case, and show me the evaluation data that supports the decision."
+
+**A concrete scenario:** A team wants AI-powered merchant FAQ search. Start with prompting: give the LLM the merchant's question plus top FAQ entries. If accuracy reaches 85%+, ship it. If the model consistently misses because it lacks the right FAQs, add RAG. If the model's tone is wrong despite good prompts, consider fine-tuning. Each step is only justified by measured failure of the previous one.`
       }
     ],
     quiz: [
@@ -315,7 +319,11 @@ Hallucinations are more likely when the model is asked about niche topics (less 
 
 **Knowledge graphs** represent relationships between entities (merchants, products, transactions, policies) as a graph structure. For complex queries that require reasoning across relationships ("What products does this merchant sell that are eligible for X program?"), graph-based retrieval can outperform vector search.
 
-**The architecture decision:** Start simple (basic vector search), measure retrieval quality, and add complexity only when you've proven the simpler approach is the bottleneck. Every layer of sophistication adds latency, cost, and maintenance burden.`
+**The architecture decision:** Start simple (basic vector search), measure retrieval quality, and add complexity only when you've proven the simpler approach is the bottleneck. Every layer of sophistication adds latency, cost, and maintenance burden.
+
+**Your RAG architecture review question:** When a team proposes a RAG system, ask: what is the chunking strategy and why? How will you handle queries that span multiple chunks? What is the fallback when retrieval finds nothing relevant? How will you measure retrieval quality separately from generation quality? These four questions catch the most common RAG design mistakes.
+
+**A practical example:** A merchant searches for "PX-4092 error." Vector search might miss this because "PX-4092" has no semantic meaning to the embedding model. Keyword search finds it instantly. Hybrid search catches both natural language questions and exact-match lookups \u2014 which is why it outperforms either approach alone.`
       }
     ],
     quiz: [
@@ -550,7 +558,9 @@ The key distinction is **autonomy in decision-making**. Agents choose their own 
 • User satisfaction (CSAT/NPS) — Do users like the experience?
 • Downstream business impact — Revenue, conversion, retention, support costs
 
-**The question to ask your teams:** "Show me the eval dashboard." If one doesn't exist, that's your first priority — not building more features.`
+**The question to ask your teams:** "Show me the eval dashboard." If one doesn't exist, that's your first priority — not building more features.
+
+**Your eval mandate:** Before any AI feature reaches production, require: (1) an eval dataset of 200+ representative examples, (2) baseline accuracy on that dataset, (3) a specific metric that defines success, (4) a plan for updating the eval set quarterly. No eval, no launch. This single policy prevents more quality disasters than any other.`
       }
     ],
     quiz: [
@@ -754,19 +764,21 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
 
 **The portfolio view:** At any given time, you should have a mix of: production features generating value (60%), features in active development (25%), and exploratory bets being evaluated (15%). If 100% of your AI investment is in production, you're not innovating. If 100% is exploratory, you're not delivering.
 
-**A concrete example:** Imagine you have budget for 5 AI projects. Allocate 3 to proven patterns (RAG-based support, classification-based routing, automated reporting) that will ship this quarter. Allocate 1 to shared platform infrastructure (eval framework, model gateway). Allocate 1 to an exploratory bet (agentic merchant advisor) with a 60-day checkpoint. This portfolio delivers near-term value while building capability.`
+**A concrete example:** Imagine you have budget for 5 AI projects. Allocate 3 to proven patterns (RAG-based support, classification-based routing, automated reporting) that will ship this quarter. Allocate 1 to shared platform infrastructure (eval framework, model gateway). Allocate 1 to an exploratory bet (agentic merchant advisor) with a 60-day checkpoint. This portfolio delivers near-term value while building capability.
+
+**Your prioritization question for every AI proposal:** Before approving, ask: what is the eval metric, what is the current baseline without AI, and what improvement would justify the investment? If the team cannot answer these three questions, the proposal is not ready for investment.`
       }
     ],
     quiz: [
       {
         scenario: "Three pitches: A) AI fraud detection (10M tx/day, current 2hr detection). B) AI auto-generate legal contracts. C) AI IT help desk (500 tickets/day, 70% are password resets). Rank best to worst.",
         options: [
-          "A, C, B — fraud has highest business impact and volume, making it the obvious top priority",
-          "B, A, C — contracts have highest per-unit value and would be a major competitive differentiator",
           "C, A, B — internal, high-volume, repetitive, tolerant of imperfection, clear feedback loop",
+          "B, A, C — contracts have highest per-unit value and would be a major competitive differentiator",
+          "A, C, B — fraud has highest business impact and volume, making it the obvious top priority",
           "A, B, C — customer-facing use cases should take priority over internal tooling"
         ],
-        correct: 2,
+        correct: 0,
         explanation: "C hits every criterion: high volume, tolerance for imperfection, clear feedback loop, existing data, human bottleneck. A already has a working system (incremental). B requires near-perfect accuracy on legal documents — worst fit for AI's current limitations."
       },
       {
@@ -828,7 +840,9 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
 
 **A practical recommendation:** Invest in an evaluation and monitoring platform early. This isn't a nice-to-have that you add after launch — it's foundational infrastructure. Whether you build it, use open-source tools (LangSmith, Phoenix, Weights & Biases), or buy a platform (Braintrust, HumanLoop), having it in place from day one of development is critical.
 
-**Your monitoring mandate:** Before any AI feature launches, require the team to show you a dashboard with: quality score trend, latency P50/P95/P99, cost per interaction, error rate, and escalation rate. If any metric doesn't have an alert threshold, ask why.`
+**Your monitoring mandate:** Before any AI feature launches, require the team to show you a dashboard with: quality score trend, latency P50/P95/P99, cost per interaction, error rate, and escalation rate. If any metric doesn't have an alert threshold, ask why.
+
+**A concrete example:** Your AI support feature works great for 3 months. Then quality silently degrades over 2 weeks. Without monitoring, the first signal is merchant complaints. With monitoring, you catch it on day 1: quality score drops from 0.88 to 0.79, the alert fires, and the team investigates. Root cause: a data pipeline stopped updating. Fix takes 30 minutes. Without monitoring, the damage takes weeks to notice and months of trust to repair.`
       }
     ],
     quiz: [
@@ -900,7 +914,9 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
 
 **Communicating with leadership:** Frame AI investments as a portfolio with expected value, not as guaranteed outcomes. "We're pursuing 5 AI initiatives. Based on our evaluation data, 3 are on track to deliver measurable value this quarter, 1 needs more iteration, and 1 may be infeasible and we'll pivot the investment." This is honest and builds trust — much more so than over-promising and under-delivering.
 
-**A practical example:** Imagine reporting on 5 AI initiatives. Instead of "all on track," say: "A shipped and reduces support costs by $40K/month. B and C are in production with strong eval metrics. D plateaued at 78% accuracy — one more sprint on retrieval before we decide. E was shut down; we redirected that team to accelerate B." This builds trust through transparency.`
+**A practical example:** Imagine reporting on 5 AI initiatives. Instead of "all on track," say: "A shipped and reduces support costs by $40K/month. B and C are in production with strong eval metrics. D plateaued at 78% accuracy — one more sprint on retrieval before we decide. E was shut down; we redirected that team to accelerate B." This builds trust through transparency.
+
+**Your team structure decision framework:** If you have fewer than 5 AI engineers, use the embedded model \u2014 each engineer sits on a product team. If you have 5-15, use the hub-and-spoke model \u2014 a central AI team with members embedded in priority product teams. If you have 15+, build a full AI platform team that provides shared infrastructure plus embedded AI engineers on product teams. Match the structure to your scale.`
       }
     ],
     quiz: [
@@ -995,12 +1011,12 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
       {
         scenario: "Two teams present approaches for merchant segmentation. Team A uses an LLM to read merchant descriptions and categorize them. Team B uses clustering on structured features (transaction volume, average order value, product category mix). Which is more appropriate?",
         options: [
-          "Team A — LLMs understand merchant businesses better than statistical clustering over numbers",
-          "Team B — but they should use supervised classification instead of unsupervised clustering",
           "Both are valid for different inputs: Team B for behavioral patterns from structured data, Team A for understanding unstructured merchant descriptions",
+          "Team B — but they should use supervised classification instead of unsupervised clustering",
+          "Team A — LLMs understand merchant businesses better than statistical clustering over numbers",
           "Team A — because LLM-based categorization is more flexible and easier to update"
         ],
-        correct: 2,
+        correct: 0,
         explanation: "The right tool depends on the input data type. Behavioral segmentation from numerical features is a clustering problem — classical ML shines here. Understanding unstructured merchant descriptions is a language task — LLMs are the right tool. The best approach often combines both. This illustrates why knowing the full toolkit matters."
       }
     ]
@@ -1077,7 +1093,7 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
     title: "AI-Powered Product Design",
     subtitle: "How AI changes the way you design products",
     icon: "△",
-    estimatedMinutes: 10,
+    estimatedMinutes: 8,
     sections: [
       {
         heading: "AI Inside vs. AI Forward",
@@ -1402,7 +1418,9 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
 
 **The cultural shift:** Evaluation isn't something that happens once before launch. It's a continuous discipline, like monitoring uptime. Your teams should treat eval failures with the same urgency as production incidents — because a quality regression is a production incident, just one that doesn't trigger a PagerDuty alert unless you've built it to.
 
-**Your mandate as a leader:** Every AI feature must have an eval dashboard visible to the team, updated daily. No exceptions. If a feature doesn't have continuous eval, it's running blind. Make this a non-negotiable standard, and inspect it regularly.`
+**Your mandate as a leader:** Every AI feature must have an eval dashboard visible to the team, updated daily. No exceptions. If a feature doesn't have continuous eval, it's running blind. Make this a non-negotiable standard, and inspect it regularly.
+
+**A practical example:** Your initial eval set has 200 merchant support queries. After 3 months, merchants start asking about a newly launched feature not covered in the eval set. Your eval still shows 90% accuracy, but complaints about this feature are increasing. The fix: add 50 queries about the new feature. Accuracy drops to 82% \u2014 now you see the real problem and can address it. Eval sets that don\u2019t evolve with production traffic create a false sense of quality.`
       }
     ],
     quiz: [
@@ -1420,12 +1438,12 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
       {
         scenario: "Your model-as-judge rates your AI support tool at 4.2/5 on helpfulness. But when you run human evaluation on the same 200 examples, humans rate it 3.1/5. The scores don't correlate well. What should you do?",
         options: [
-          "Trust the human scores — they're the gold standard, and the model-as-judge is unreliable for this task",
-          "Trust the model-as-judge — it's more consistent and humans are subjective and noisy evaluators",
           "Investigate why they diverge — likely the rubric is poorly calibrated. Refine the rubric using the human-scored examples as anchor points, then re-evaluate correlation",
+          "Trust the model-as-judge — it's more consistent and humans are subjective and noisy evaluators",
+          "Trust the human scores — they're the gold standard, and the model-as-judge is unreliable for this task",
           "Average both scores to get a more balanced assessment of true quality"
         ],
-        correct: 2,
+        correct: 0,
         explanation: "Poor correlation usually means the rubric isn't capturing what humans care about. The human-scored examples become your calibration data — examine where the judge and humans disagree, identify patterns, and refine the rubric to address those gaps. Neither blindly trusting nor averaging makes sense. Fix the measurement tool."
       },
       {
@@ -1447,7 +1465,7 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
     title: "Fine-Tuning (Practical Depth)",
     subtitle: "When to invest and how to evaluate the results",
     icon: "⊘",
-    estimatedMinutes: 8,
+    estimatedMinutes: 10,
     sections: [
       {
         heading: "Fine-Tuning Methods & When Each Applies",
@@ -1485,19 +1503,21 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
 
 **The maintenance question:** Fine-tuned models need retraining as: the base model gets updated (your LoRA adapters may not transfer), your data distribution shifts, your product changes, or new requirements emerge. Budget for retraining every 3-6 months and factor this into the ROI calculation. A fine-tuned model isn't a one-time investment — it's an ongoing commitment.
 
-**Your decision framework:** Require teams to present: (1) the eval delta between base and fine-tuned model, (2) regression test results showing no degradation, (3) a cost comparison including ongoing maintenance, and (4) a retraining plan. If any of these is missing, the fine-tuning proposal isn't complete.`
+**Your decision framework:** Require teams to present: (1) the eval delta between base and fine-tuned model, (2) regression test results showing no degradation, (3) a cost comparison including ongoing maintenance, and (4) a retraining plan. If any of these is missing, the fine-tuning proposal isn't complete.
+
+**A concrete scenario:** You want your AI to respond in a specific merchant-friendly tone \u2014 professional but warm, never uses jargon. After testing 20 prompt variations, the best still occasionally lapses into technical language. This is a good fine-tuning candidate: the behavior is consistent and demonstrable, prompt engineering hit a ceiling, and you can generate training examples by rewriting 2,000 real responses in the target tone. That\u2019s the \u2018prompt engineering hit a ceiling\u2019 trigger from the decision framework.`
       }
     ],
     quiz: [
       {
         scenario: "A team fine-tunes a model and shows you impressive results: accuracy improved from 76% to 91% on their target task. They want to deploy immediately. What should you require before approving?",
         options: [
-          "Nothing additional — a 15-point accuracy improvement clearly justifies deployment",
-          "A cost analysis comparing the fine-tuned model's serving cost against the base model to ensure ROI",
           "Regression test results on general capabilities, A/B test plan for production validation, and a retraining schedule — because the accuracy improvement is only part of the picture",
+          "A cost analysis comparing the fine-tuned model's serving cost against the base model to ensure ROI",
+          "Nothing additional — a 15-point accuracy improvement clearly justifies deployment",
           "A larger eval dataset to confirm the 91% number is statistically robust"
         ],
-        correct: 2,
+        correct: 0,
         explanation: "A 15-point improvement sounds great, but fine-tuning can degrade general capabilities (regression), eval accuracy doesn't always translate to production improvements (A/B testing), and the model will need ongoing maintenance (retraining plan). A complete fine-tuning proposal includes all four elements: target improvement, regression testing, production validation plan, and maintenance commitment."
       },
       {
@@ -1555,7 +1575,9 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
 
 **The optimization sequence:** Don't optimize prematurely. Build the feature with a single good model, prove value, then optimize. Premature optimization adds architectural complexity before you've validated the feature is worth keeping. But do model cost at scale during the planning phase so there are no surprises.
 
-**Budget planning:** AI features should have a cost budget just like infrastructure budgets. Set alert thresholds at 80% and 100% of monthly budget. Review cost trends monthly. If a feature's cost is growing faster than its value, something needs to change — either optimize or reconsider the approach.`
+**Budget planning:** AI features should have a cost budget just like infrastructure budgets. Set alert thresholds at 80% and 100% of monthly budget. Review cost trends monthly. If a feature's cost is growing faster than its value, something needs to change — either optimize or reconsider the approach.
+
+**Your bake-off template:** (1) Define eval dataset from real production queries. (2) Test each model under identical conditions. (3) Measure accuracy, latency, and cost per query. (4) Calculate total 12-month cost at projected volume. (5) Assess migration risk. Present as a decision matrix, not a recommendation.\n\n**A concrete example:** Comparing 3 models for merchant support. Model A: 87% accuracy, $0.003/query. Model B: 91% accuracy, $0.012/query. Model C: 89% accuracy, $0.005/query. At 500K queries/month: A costs $1,500/mo, B costs $6,000/mo, C costs $2,500/mo. Without the bake-off, the team picks B for accuracy alone. With it, C\u2019s balance of quality and cost is clearly the right choice.`
       }
     ],
     quiz: [
@@ -1589,7 +1611,7 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
     title: "AI for Engineering Productivity",
     subtitle: "How AI changes your engineering teams",
     icon: "✦",
-    estimatedMinutes: 6,
+    estimatedMinutes: 8,
     sections: [
       {
         heading: "AI Coding Assistants in Practice",
@@ -1615,7 +1637,9 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
 
 **Security and IP implications:** AI coding assistants are trained on public code and may suggest code that matches existing open-source projects (licensing risk). They may also send your proprietary code to external APIs during the completion process. Evaluate your AI coding tools' data policies, consider enterprise versions with data isolation, and set clear policies about which repositories can use AI assistance.
 
-**Your adoption framework:** Don\u2019t mandate universal AI tool usage. Instead: provide access to AI coding tools for all engineers, track adoption voluntarily, measure both velocity AND quality metrics, and share internal case studies. Let adoption be pulled by demonstrated value, not pushed by mandate.`
+**Your adoption framework:** Don\u2019t mandate universal AI tool usage. Instead: provide access to AI coding tools for all engineers, track adoption voluntarily, measure both velocity AND quality metrics, and share internal case studies. Let adoption be pulled by demonstrated value, not pushed by mandate.
+
+**A concrete scenario:** Your backend team uses Copilot heavily for test generation and boilerplate, saving an estimated 3-4 hours per engineer per week. Your infrastructure team barely uses it because their work involves complex distributed systems where AI suggestions are rarely correct. Both outcomes are fine \u2014 the ROI is different by domain. Forcing the infrastructure team to adopt Copilot wastes their time and breeds resentment.`
       }
     ],
     quiz: [
@@ -1661,7 +1685,9 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
 
 **The governance maturity ladder:** Level 1: ad-hoc (each team does their own thing). Level 2: guidelines (shared best practices, voluntary adoption). Level 3: standards (mandatory requirements with review processes). Level 4: platform (shared infrastructure enforces standards automatically). Most organizations should aim for Level 3 and build toward Level 4. Trying to jump straight to Level 4 before establishing shared standards usually fails.
 
-For example, start by publishing a one-page AI Feature Launch Checklist (eval requirements, guardrail standards, cost review) and require all teams to complete it. That\u2019s Level 2 to Level 3. Once most teams follow it voluntarily, encode the checklist into your platform tooling. That\u2019s Level 3 to Level 4.`
+For example, start by publishing a one-page AI Feature Launch Checklist (eval requirements, guardrail standards, cost review) and require all teams to complete it. That\u2019s Level 2 to Level 3. Once most teams follow it voluntarily, encode the checklist into your platform tooling. That\u2019s Level 3 to Level 4.
+
+\n\n**Your scaling readiness checklist:** Before expanding AI from one team to many, verify: (1) you have a repeatable evaluation framework (not custom per feature), (2) at least one feature has been in production for 3+ months with stable quality, (3) you have cost tracking per feature, (4) there is a shared model gateway or abstraction layer. Missing any of these means scaling will multiply problems, not just features.`
       },
       {
         heading: "Building an Internal AI Platform",
@@ -1763,7 +1789,9 @@ For example, start by publishing a one-page AI Feature Launch Checklist (eval re
 
 **Your operating rhythm:** Weekly team standups on AI execution. Monthly leadership report on business impact and cost. Quarterly strategy review with portfolio assessment and rebalancing. Annual AI strategy refresh aligned with business planning. This cadence keeps AI visible, accountable, and integrated into the business.
 
-**How this differs from Module 24:** That module covers initial AI business cases \u2014 how to propose and justify investments. This module covers ongoing reporting discipline that maintains trust over quarters and years. The initial pitch gets funding. Ongoing reporting determines whether you get more.\n\n**Your stakeholder map:** The CFO gets cost trends and ROI. The CPO gets feature impact and adoption. The CISO gets security and compliance. Generic reports serve no one \u2014 tailor communication to each stakeholder\u2019s concerns.`
+**How this differs from Module 24:** That module covers initial AI business cases \u2014 how to propose and justify investments. This module covers ongoing reporting discipline that maintains trust over quarters and years. The initial pitch gets funding. Ongoing reporting determines whether you get more.\n\n**Your stakeholder map:** The CFO gets cost trends and ROI. The CPO gets feature impact and adoption. The CISO gets security and compliance. Generic reports serve no one \u2014 tailor communication to each stakeholder\u2019s concerns.
+
+**A concrete example of effective monthly reporting:** \u2018Merchant support AI handled 68% of queries this month (up from 61%), saving $52K. Conversion optimization A/B test shows +12 basis points lift ($1.2M annualized). Fraud model shipped \u2014 false positive rate dropped 18%. Challenge: agentic commerce prototype at 71% accuracy, below 85% threshold. Recommendation: one more sprint on tool design before deciding to continue or pivot.\u2019 Specific, evidence-based, honest about challenges.`
       }
     ],
     quiz: [
@@ -1874,12 +1902,12 @@ For example, start by publishing a one-page AI Feature Launch Checklist (eval re
       {
         scenario: "Your team self-hosts a 70B model for an internal tool. They're serving it in FP16 across 2 A100 GPUs at $4/hr each. An engineer proposes quantizing to INT4, which would fit on a single GPU. Quality benchmarks show 2% accuracy drop on your eval set. Should you approve?",
         options: [
-          "No \u2014 any quality degradation is unacceptable and the cost savings don't justify the risk",
-          "Only if the team can eliminate the 2% quality gap through better prompt engineering on the quantized model",
           "Yes \u2014 for an internal tool, 2% accuracy drop is likely acceptable, and cutting from $8/hr to $4/hr (50% cost reduction) while also reducing inference latency is a strong trade-off",
+          "Only if the team can eliminate the 2% quality gap through better prompt engineering on the quantized model",
+          "No \u2014 any quality degradation is unacceptable and the cost savings don't justify the risk",
           "Approve INT8 instead as a compromise \u2014 it provides most of the cost savings with less quality risk"
         ],
-        correct: 2,
+        correct: 0,
         explanation: "For internal tools, the quality-cost trade-off clearly favors quantization. 2% accuracy drop is likely imperceptible in practice for an internal tool, while 50% cost reduction is significant. The key insight is matching quality requirements to the use case \u2014 customer-facing features warrant more caution, but internal tools can tolerate the trade-off."
       },
       {
@@ -1932,11 +1960,11 @@ For example, start by publishing a one-page AI Feature Launch Checklist (eval re
         scenario: "Your vector database search returns results in 15ms with 92% recall. A teammate wants to increase recall to 99% by tuning HNSW parameters. This increases search latency to 120ms. For a merchant-facing FAQ bot with a 2-second total latency budget, should you approve?",
         options: [
           "Yes \u2014 99% recall means significantly fewer missed documents and better answer quality",
-          "No \u2014 the 7% recall improvement is marginal while the 8x latency increase consumes a significant portion of the latency budget. The LLM generation step needs most of that 2-second budget. Optimize retrieval quality through better chunking or a re-ranker instead",
+          "Test both configurations in A/B and let the business metrics decide",
           "Approve it \u2014 120ms is still fast and won't noticeably impact user experience",
-          "Test both configurations in A/B and let the business metrics decide"
+          "No \u2014 the 7% recall improvement is marginal while the 8x latency increase consumes a significant portion of the latency budget. The LLM generation step needs most of that 2-second budget. Optimize retrieval quality through better chunking or a re-ranker instead"
         ],
-        correct: 1,
+        correct: 3,
         explanation: "Latency budget allocation matters. In a 2-second budget, the LLM generation step typically needs 1-1.5 seconds. Going from 15ms to 120ms for retrieval is a significant chunk of the remaining budget, especially once you add network overhead, re-ranking, and other processing. The 7% recall improvement might not translate to noticeably better answers, while the latency impact is real. Better retrieval through chunking, re-ranking, or hybrid search can improve quality without the latency cost."
       }
     ]
@@ -1947,7 +1975,7 @@ For example, start by publishing a one-page AI Feature Launch Checklist (eval re
     title: "Advanced RAG Techniques",
     subtitle: "Beyond basic retrieve-and-generate",
     icon: "\u25a1",
-    estimatedMinutes: 8,
+    estimatedMinutes: 10,
     sections: [
       {
         heading: "Query Decomposition & Transformation",
@@ -1959,7 +1987,7 @@ For example, start by publishing a one-page AI Feature Launch Checklist (eval re
       },
       {
         heading: "RAG Evaluation & Optimization",
-        content: "**Component-level evaluation** is what separates teams that iterate effectively from those that guess.\n\n**Evaluate retrieval separately from generation.** This is the most important diagnostic principle for RAG systems. Build a retrieval-only eval set: queries paired with the documents that should be retrieved. Measure Recall@K and MRR. If retrieval is poor, no amount of LLM improvement will fix the system.\n\n**Evaluate generation given perfect retrieval.** Take your eval queries, manually provide the correct documents as context, and measure the LLM's answer quality. If the answer is bad even with perfect context, the issue is in generation (prompt engineering, model capability), not retrieval.\n\n**Context relevance scoring.** For each retrieved document, have a model-as-judge score how relevant it is to the query. This reveals: are you retrieving irrelevant documents (noise)? Is the relevant document missing (recall failure)? Is it present but ranked too low (ranking failure)?\n\n**Answer faithfulness.** Does the generated answer actually reflect what's in the retrieved documents, or did the LLM hallucinate despite having the right context? This catches a subtle failure mode where the retrieval is good but the model ignores it.\n\n**The optimization loop:** Diagnose which component is the bottleneck (retrieval, ranking, generation, faithfulness). Apply the targeted fix. Measure the improvement on your eval set. Repeat. Teams that skip diagnosis and apply random improvements waste months."
+        content: "**Component-level evaluation** is what separates teams that iterate effectively from those that guess.\n\n**Evaluate retrieval separately from generation.** This is the most important diagnostic principle for RAG systems. Build a retrieval-only eval set: queries paired with the documents that should be retrieved. Measure Recall@K and MRR. If retrieval is poor, no amount of LLM improvement will fix the system.\n\n**Evaluate generation given perfect retrieval.** Take your eval queries, manually provide the correct documents as context, and measure the LLM's answer quality. If the answer is bad even with perfect context, the issue is in generation (prompt engineering, model capability), not retrieval.\n\n**Context relevance scoring.** For each retrieved document, have a model-as-judge score how relevant it is to the query. This reveals: are you retrieving irrelevant documents (noise)? Is the relevant document missing (recall failure)? Is it present but ranked too low (ranking failure)?\n\n**Answer faithfulness.** Does the generated answer actually reflect what's in the retrieved documents, or did the LLM hallucinate despite having the right context? This catches a subtle failure mode where the retrieval is good but the model ignores it.\n\n**The optimization loop:** Diagnose which component is the bottleneck (retrieval, ranking, generation, faithfulness). Apply the targeted fix. Measure the improvement on your eval set. Repeat. Teams that skip diagnosis and apply random improvements waste months.\n\n **A concrete scenario:** Your RAG system for merchant policies scores 85% on overall quality, but only 60% on questions comparing current vs. previous policies. Diagnosis: the single query retrieves current policy docs but misses historical versions. Fix: add query decomposition to break comparison questions into separate retrievals for each time period. Re-test: quality on comparison questions jumps to 82%."
       }
     ],
     quiz: [
@@ -2035,7 +2063,7 @@ For example, start by publishing a one-page AI Feature Launch Checklist (eval re
     title: "Reasoning Models & Test-Time Compute",
     subtitle: "When thinking longer produces better answers",
     icon: "\u25ce",
-    estimatedMinutes: 6,
+    estimatedMinutes: 8,
     sections: [
       {
         heading: "How Reasoning Models Work",
@@ -2043,7 +2071,7 @@ For example, start by publishing a one-page AI Feature Launch Checklist (eval re
       },
       {
         heading: "When Reasoning Models Are Worth the Cost",
-        content: "**Use reasoning models when:** The task requires genuine multi-step reasoning (mathematical proofs, complex code generation, strategic analysis with many variables). The quality improvement justifies the 10-50x cost increase. The task is low-volume and high-value (a few hundred complex analyses per day, not millions of simple queries). Human verification of the result is expensive (so getting it right the first time matters).\n\n**Don't use reasoning models when:** The task is pattern matching, classification, or simple generation. Volume is high and cost matters. Latency is critical (reasoning adds seconds to minutes). The task can be solved equally well with chain-of-thought prompting on a standard model.\n\n**The hybrid approach:** Use a cheap classifier to determine query complexity, then route simple queries to a fast standard model and complex queries to a reasoning model. This gives you the best quality where it matters at an acceptable average cost.\n\n**Test-time compute scaling:** The emerging insight is that you can often improve AI performance more cost-effectively by spending more on inference (bigger context, more reasoning steps, multiple samples) than by using a bigger model. A small model that \"thinks longer\" can outperform a large model that \"thinks fast\" on certain tasks. This has profound implications for how you architect AI systems.\n\n**Your decision framework:** For each AI feature, ask: \"Is this a fast-thinking or slow-thinking problem?\" Fast-thinking (classification, extraction, simple generation) \u2192 standard model. Slow-thinking (analysis, complex reasoning, multi-step problems) \u2192 consider reasoning models or extended chain-of-thought."
+        content: "**Use reasoning models when:** The task requires genuine multi-step reasoning (mathematical proofs, complex code generation, strategic analysis with many variables). The quality improvement justifies the 10-50x cost increase. The task is low-volume and high-value (a few hundred complex analyses per day, not millions of simple queries). Human verification of the result is expensive (so getting it right the first time matters).\n\n**Don't use reasoning models when:** The task is pattern matching, classification, or simple generation. Volume is high and cost matters. Latency is critical (reasoning adds seconds to minutes). The task can be solved equally well with chain-of-thought prompting on a standard model.\n\n**The hybrid approach:** Use a cheap classifier to determine query complexity, then route simple queries to a fast standard model and complex queries to a reasoning model. This gives you the best quality where it matters at an acceptable average cost.\n\n**Test-time compute scaling:** The emerging insight is that you can often improve AI performance more cost-effectively by spending more on inference (bigger context, more reasoning steps, multiple samples) than by using a bigger model. A small model that \"thinks longer\" can outperform a large model that \"thinks fast\" on certain tasks. This has profound implications for how you architect AI systems.\n\n**Your decision framework:** For each AI feature, ask: \"Is this a fast-thinking or slow-thinking problem?\" Fast-thinking (classification, extraction, simple generation) \u2192 standard model. Slow-thinking (analysis, complex reasoning, multi-step problems) \u2192 consider reasoning models or extended chain-of-thought.\n\n**A concrete scenario:** Your team builds a tool that analyzes a merchant\u2019s full transaction history and recommends pricing strategy changes. Using GPT-4o, the recommendations are generic (\u2018increase prices on popular items\u2019). Using a reasoning model, the analysis identifies specific product-category patterns, seasonal trends, and competitive positioning opportunities. The difference is dramatic because the task genuinely requires multi-step reasoning over complex data \u2014 exactly where reasoning models justify their cost."
       }
     ],
     quiz: [
@@ -2123,7 +2151,7 @@ For example, start by publishing a one-page AI Feature Launch Checklist (eval re
     sections: [
       {
         heading: "Serving Frameworks",
-        content: "When self-hosting models, the serving framework determines your throughput, latency, and cost efficiency.\n\n**vLLM** is the most popular open-source serving framework. Its key innovation is PagedAttention, which manages KV cache memory efficiently. It supports continuous batching (processing new requests without waiting, covered in the Inference module), tensor parallelism (splitting models across GPUs), and integrates with most model formats. Default choice for most self-hosting scenarios.\n\n**TGI (Text Generation Inference)** by Hugging Face is another strong option. Tightly integrated with the Hugging Face ecosystem, good for teams already using HF models and infrastructure. Performance is competitive with vLLM for most workloads.\n\n**TensorRT-LLM** by NVIDIA is optimized specifically for NVIDIA GPUs. Offers the best performance on NVIDIA hardware but requires more setup and is less flexible. Best for high-throughput production serving where squeezing maximum performance matters.\n\n**When to self-host vs. use APIs:** Self-host when: data can't leave your infrastructure, you need consistent low latency, costs at scale justify the infrastructure investment, or you need custom models. Use APIs when: you're early stage and iterating, volume doesn't justify infrastructure, you want automatic model updates, or you need the latest frontier models.\n\n**The hybrid architecture:** Many teams use APIs for development and frontier model access, and self-host for high-volume production workloads with cost-optimized models. This gives you the best of both worlds."
+        content: "When self-hosting models, the serving framework determines your throughput, latency, and cost efficiency.\n\n**vLLM** is the most popular open-source serving framework. Its key innovation is PagedAttention, which manages KV cache memory efficiently. It supports continuous batching (processing new requests without waiting, covered in the Inference module), tensor parallelism (splitting models across GPUs), and integrates with most model formats. Default choice for most self-hosting scenarios.\n\n**TGI (Text Generation Inference)** by Hugging Face is another strong option. Tightly integrated with the Hugging Face ecosystem, good for teams already using HF models and infrastructure. Performance is competitive with vLLM for most workloads.\n\n**TensorRT-LLM** by NVIDIA is optimized specifically for NVIDIA GPUs. Offers the best performance on NVIDIA hardware but requires more setup and is less flexible. Best for high-throughput production serving where squeezing maximum performance matters.\n\n**When to self-host vs. use APIs:** Self-host when: data can't leave your infrastructure, you need consistent low latency, costs at scale justify the infrastructure investment, or you need custom models. Use APIs when: you're early stage and iterating, volume doesn't justify infrastructure, you want automatic model updates, or you need the latest frontier models.\n\n**The hybrid architecture:** Many teams use APIs for development and frontier model access, and self-host for high-volume production workloads with cost-optimized models. This gives you the best of both worlds.\n\n**A concrete example:** Your organization uses Claude via API for 80% of features (development speed, latest capabilities) and self-hosts a quantized Llama model for the high-volume transaction classification feature that processes 2M requests/day (cost optimization). The model gateway routes requests transparently \u2014 application teams don\u2019t know or care which model serves their request."
       },
       {
         heading: "Multi-Model Serving & Gateway Patterns",
@@ -2231,7 +2259,7 @@ For example, start by publishing a one-page AI Feature Launch Checklist (eval re
     sections: [
       {
         heading: "Reliability Patterns for AI Services",
-        content: "AI services introduce failure modes that don't exist in traditional software. Your architecture must handle them gracefully.\n\n**Circuit breakers** (a pattern borrowed from electrical engineering: when a service is failing, stop sending it traffic and use a fallback instead) prevent cascading failures when an AI service degrades. If the LLM provider's latency spikes from 1s to 30s, a circuit breaker detects the degradation and routes traffic to a fallback (cached responses, simpler model, or non-AI path) rather than letting requests queue up and crash the system.\n\n**Timeout management** is more nuanced for AI than traditional services. LLM response time is highly variable \u2014 a complex query might legitimately take 5x longer than a simple one. Fixed timeouts either kill legitimate long requests or wait too long for failed ones. Solution: adaptive timeouts based on query complexity classification.\n\n**Fallback chains** define what happens when the primary AI path fails. Level 1: Try primary model. Level 2: Try secondary model. Level 3: Return cached response for similar query. Level 4: Return generic helpful response. Level 5: Route to human. Each level provides progressively degraded but still useful service.\n\n**Idempotency** (getting the same result when you retry a request)**:** AI responses are non-deterministic, so retrying a failed request might produce a different response. For features where consistency matters (\"the AI told me X, now it says Y\"), cache the response and serve the cached version on retry.\n\n**Your architecture review question:** For every AI feature, ask: \"What's the fallback path when the AI service is unavailable or degraded?\" If the answer is \"the feature breaks,\" the architecture isn't production-ready."
+        content: "AI services introduce failure modes that don't exist in traditional software. Your architecture must handle them gracefully.\n\n**Circuit breakers** (a pattern borrowed from electrical engineering: when a service is failing, stop sending it traffic and use a fallback instead) prevent cascading failures when an AI service degrades. If the LLM provider's latency spikes from 1s to 30s, a circuit breaker detects the degradation and routes traffic to a fallback (cached responses, simpler model, or non-AI path) rather than letting requests queue up and crash the system.\n\n**Timeout management** is more nuanced for AI than traditional services. LLM response time is highly variable \u2014 a complex query might legitimately take 5x longer than a simple one. Fixed timeouts either kill legitimate long requests or wait too long for failed ones. Solution: adaptive timeouts based on query complexity classification.\n\n**Fallback chains** define what happens when the primary AI path fails. Level 1: Try primary model. Level 2: Try secondary model. Level 3: Return cached response for similar query. Level 4: Return generic helpful response. Level 5: Route to human. Each level provides progressively degraded but still useful service.\n\n**Idempotency** (getting the same result when you retry a request)**:** AI responses are non-deterministic, so retrying a failed request might produce a different response. For features where consistency matters (\"the AI told me X, now it says Y\"), cache the response and serve the cached version on retry.\n\n**Your architecture review question:** For every AI feature, ask: \"What's the fallback path when the AI service is unavailable or degraded?\" If the answer is \"the feature breaks,\" the architecture isn't production-ready.\n\n**Your architecture review checklist:** For every AI feature heading to production, verify: (1) fallback chain defined (what happens when the AI service is down?), (2) timeout strategy (adaptive, not fixed), (3) monitoring dashboard (quality, latency, cost, error rate), (4) idempotent response handling (retries don\u2019t confuse users), (5) graceful degradation path (cached response or human escalation). Any missing item is a production risk."
       },
       {
         heading: "Streaming, Caching & Event-Driven AI",
@@ -2254,11 +2282,11 @@ For example, start by publishing a one-page AI Feature Launch Checklist (eval re
         scenario: "Your AI merchant support feature calls an LLM API that occasionally returns errors (about 2% of requests). The team's current implementation simply shows 'Something went wrong' to the user. What architecture would you recommend?",
         options: [
           "Retry the LLM request up to 3 times with exponential backoff before showing an error",
-          "Implement a fallback chain: retry once, then try a secondary model, then serve a cached response for a similar query, then offer to connect the merchant to a human agent. Each level degrades gracefully rather than failing completely",
+          "Add a queue system so failed requests are retried asynchronously and the user is notified when the answer is ready",
           "Switch to a more reliable LLM provider with better uptime SLAs",
-          "Add a queue system so failed requests are retried asynchronously and the user is notified when the answer is ready"
+          "Implement a fallback chain: retry once, then try a secondary model, then serve a cached response for a similar query, then offer to connect the merchant to a human agent. Each level degrades gracefully rather than failing completely"
         ],
-        correct: 1,
+        correct: 3,
         explanation: "Fallback chains are the standard reliability pattern for AI services. A single retry catches transient errors. A secondary model handles provider outages. Cached responses handle prolonged failures. Human escalation is the final safety net. Each level provides progressively degraded but still useful service. The key principle: never show a bare error when you can provide a less-optimal but still helpful response."
       },
       {
@@ -2289,7 +2317,7 @@ For example, start by publishing a one-page AI Feature Launch Checklist (eval re
       },
       {
         heading: "Building Domain-Specific Benchmarks",
-        content: "The most valuable benchmarks are the ones you build yourself \u2014 tailored to your actual use cases.\n\n**Design principles:** Cover your real use case distribution (weight tasks by how often they occur in production). Include difficulty tiers (easy, medium, hard \u2014 so you can see where models struggle). Include adversarial cases (inputs designed to cause failures). Version and maintain (update as your use cases evolve).\n\n**Contamination prevention:** If your benchmark questions are public, model providers might (intentionally or accidentally) train on them. Keep your benchmark private. Rotate questions periodically. Include \"canary\" questions that you can detect in model outputs if they've leaked.\n\n**Statistical rigor:** With 100 eval questions, a 3% difference between models might be noise. With 500 questions, it's likely real. Calculate confidence intervals (a range showing uncertainty, like 87% plus or minus 3%) on your results. Don't declare a winner based on small differences on small eval sets.\n\n**Comparative evaluation framework:** For model bake-offs, test each model on: your domain-specific benchmark (primary), a general capability benchmark (regression check), latency and throughput on your serving infrastructure, cost per 1K queries at your average input/output length. The winner is the model with the best score on your domain benchmark that also meets cost and latency requirements.\n\n**Your model selection principle:** Never select a model based on public benchmark scores alone. Build a domain-specific eval set (200+ examples), test each candidate under identical conditions, and choose based on your results \u2014 not the leaderboard."
+        content: "The most valuable benchmarks are the ones you build yourself \u2014 tailored to your actual use cases.\n\n**Design principles:** Cover your real use case distribution (weight tasks by how often they occur in production). Include difficulty tiers (easy, medium, hard \u2014 so you can see where models struggle). Include adversarial cases (inputs designed to cause failures). Version and maintain (update as your use cases evolve).\n\n**Contamination prevention:** If your benchmark questions are public, model providers might (intentionally or accidentally) train on them. Keep your benchmark private. Rotate questions periodically. Include \"canary\" questions that you can detect in model outputs if they've leaked.\n\n**Statistical rigor:** With 100 eval questions, a 3% difference between models might be noise. With 500 questions, it's likely real. Calculate confidence intervals (a range showing uncertainty, like 87% plus or minus 3%) on your results. Don't declare a winner based on small differences on small eval sets.\n\n**Comparative evaluation framework:** For model bake-offs, test each model on: your domain-specific benchmark (primary), a general capability benchmark (regression check), latency and throughput on your serving infrastructure, cost per 1K queries at your average input/output length. The winner is the model with the best score on your domain benchmark that also meets cost and latency requirements.\n\n**Your model selection principle:** Never select a model based on public benchmark scores alone. Build a domain-specific eval set (200+ examples), test each candidate under identical conditions, and choose based on your results \u2014 not the leaderboard.\n\n**A practical example:** You build a 300-question eval set from real merchant support queries, stratified by category (billing 40%, technical 30%, policy 20%, account 10%). You test 3 models. On the public leaderboard, Model A ranks #1. On your eval set, Model C scores highest on billing and technical questions (your highest-volume categories) while Model A wins only on policy questions. Model C is the right choice for your use case despite its lower public ranking."
       }
     ],
     quiz: [
@@ -2397,7 +2425,7 @@ For example, start by publishing a one-page AI Feature Launch Checklist (eval re
       },
       {
         heading: "Agentic Commerce",
-        content: "Agentic commerce \u2014 where AI agents act on behalf of merchants and consumers \u2014 is the frontier that could reshape payment platforms.\n\n**The vision:** A merchant's AI agent monitors inventory, adjusts pricing, manages disputes, optimizes checkout flows, and coordinates with supplier agents \u2014 all autonomously within defined boundaries. A consumer's AI agent comparison-shops, negotiates, and completes purchases across merchants. The payment platform becomes the trusted coordination layer between these agents.\n\n**What makes it possible now:** Tool-use capabilities in LLMs (agents can call APIs), standardized protocols (MCP for tool access, A2A for agent communication), and growing merchant comfort with AI automation.\n\n**What makes it hard:** Trust boundaries (how much autonomy to grant an agent with financial authority), liability (who's responsible when an agent makes a bad trade?), security (agent-to-agent communication as an attack surface), and the cold start problem (agents aren't useful until there's an ecosystem).\n\n**Your strategic question:** Is your platform positioning to be the coordination layer for agent-to-agent commerce, or just adding AI features to existing human workflows? The answer has profound architectural implications \u2014 the former requires MCP servers, A2A support, agent authentication, and escrow systems. The latter is feature development.\n\n**A concrete scenario:** A merchant\u2019s AI inventory agent detects a trending product running low. It communicates via A2A with a supplier\u2019s fulfillment agent, confirms availability, and routes the purchase through your platform\u2019s MCP server. The merchant never intervened \u2014 agents handled the workflow within pre-set boundaries.\n\n**Your strategic assessment:** Map your platform\u2019s capabilities to the agentic commerce stack. Which APIs could become MCP servers? Which merchant workflows could be agent-automated? Where does your transaction data create advantages competitors can\u2019t replicate?"
+        content: "Agentic commerce \u2014 where AI agents act on behalf of merchants and consumers \u2014 is the frontier that could reshape payment platforms.\n\n**The vision:** A merchant's AI agent monitors inventory, adjusts pricing, manages disputes, optimizes checkout flows, and coordinates with supplier agents \u2014 all autonomously within defined boundaries. A consumer's AI agent comparison-shops, negotiates, and completes purchases across merchants. The payment platform becomes the trusted coordination layer between these agents.\n\n**What makes it possible now:** Tool-use capabilities in LLMs (agents can call APIs), standardized protocols (MCP for tool access, A2A for agent communication), and growing merchant comfort with AI automation.\n\n**What makes it hard:** Trust boundaries (how much autonomy to grant an agent with financial authority), liability (who's responsible when an agent makes a bad trade?), security (agent-to-agent communication as an attack surface), and the cold start problem (agents aren't useful until there's an ecosystem).\n\n**Your strategic question:** Is your platform positioning to be the coordination layer for agent-to-agent commerce, or just adding AI features to existing human workflows? The answer has profound architectural implications \u2014 the former requires MCP servers, A2A support, agent authentication, and escrow systems. The latter is feature development.\n\n**A concrete scenario:** A merchant\u2019s AI inventory agent detects a trending product running low. It communicates via A2A with a supplier\u2019s fulfillment agent, confirms availability, and routes the purchase through your platform\u2019s MCP server. The merchant never intervened \u2014 agents handled the workflow within pre-set boundaries.\n\n**Your strategic assessment:** Map your platform\u2019s capabilities to the agentic commerce stack. Which APIs could become MCP servers? Which merchant workflows could be agent-automated? Where does your transaction data create advantages competitors can\u2019t replicate?\n\n**Your lifecycle investment decision:** Rank merchant lifecycle stages by: transaction volume (data flywheel strength), feedback loop clarity (can you measure success?), and current process cost (automation savings). Invest AI effort in the stage that scores highest across all three dimensions first."
       }
     ],
     quiz: [
@@ -2830,7 +2858,7 @@ For example, start by publishing a one-page AI Feature Launch Checklist (eval re
       },
       {
         heading: "Executive Education & Change Management",
-        content: "Scaling AI requires that leaders at all levels understand enough to make good decisions. This course is a model for what you should create for your broader leadership team.\n\n**Tiered education:** Executives need: AI strategy literacy, use case evaluation frameworks, and enough technical understanding to ask good questions (like this course). Managers need: practical AI tool proficiency, team workflow integration, and change management skills. Individual contributors need: hands-on tool training, prompt engineering basics, and domain-specific AI applications.\n\n**The internal AI academy:** Build a structured learning path for each tier. Include: live workshops (not just self-paced), hands-on projects with real business problems, and cohort-based learning (people learn better together). Update the curriculum quarterly as the field evolves.\n\n**Change management principles for AI:** Address fears directly (\"AI won't replace you, but someone who uses AI effectively might outperform you\"). Make the transition gradual (AI assists, then AI suggests, then AI automates with oversight). Provide safety nets (if AI gets it wrong, the human can always override). Measure and share early wins publicly.\n\n**Your role:** As the AI leader, you're also the AI evangelist and educator. Every conversation with a non-AI leader is an opportunity to build understanding and excitement. But be honest about limitations \u2014 overselling AI destroys credibility faster than underselling it.\n\n**Your culture playbook:** Month 1-3: Identify 5-10 AI champions across departments. Month 3-6: Champions run peer demos of their AI workflows. Month 6-9: Establish role-specific training. Month 9-12: Measure and adjust.\n\n**A concrete example:** Your best salesperson discovers AI research before calls increases close rate 25%. She shares her workflow. Within a month, 60% of the team adopts it. One authentic peer success story drives more adoption than any executive email."
+        content: "Scaling AI requires that leaders at all levels understand enough to make good decisions. This course is a model for what you should create for your broader leadership team.\n\n**Tiered education:** Executives need: AI strategy literacy, use case evaluation frameworks, and enough technical understanding to ask good questions (like this course). Managers need: practical AI tool proficiency, team workflow integration, and change management skills. Individual contributors need: hands-on tool training, prompt engineering basics, and domain-specific AI applications.\n\n**The internal AI academy:** Build a structured learning path for each tier. Include: live workshops (not just self-paced), hands-on projects with real business problems, and cohort-based learning (people learn better together). Update the curriculum quarterly as the field evolves.\n\n**Change management principles for AI:** Address fears directly (\"AI won't replace you, but someone who uses AI effectively might outperform you\"). Make the transition gradual (AI assists, then AI suggests, then AI automates with oversight). Provide safety nets (if AI gets it wrong, the human can always override). Measure and share early wins publicly.\n\n**Your role:** As the AI leader, you're also the AI evangelist and educator. Every conversation with a non-AI leader is an opportunity to build understanding and excitement. But be honest about limitations \u2014 overselling AI destroys credibility faster than underselling it.\n\n**Your culture playbook:** Month 1-3: Identify 5-10 AI champions across departments. Month 3-6: Champions run peer demos of their AI workflows. Month 6-9: Establish role-specific training. Month 9-12: Measure and adjust.\n\n**A concrete example:** Your best salesperson discovers AI research before calls increases close rate 25%. She shares her workflow. Within a month, 60% of the team adopts it. One authentic peer success story drives more adoption than any executive email.\n\n**Measuring cultural shift:** Track quarterly: percentage of teams with at least one AI feature in production, number of AI experiments initiated by non-AI teams, internal AI tool adoption rate by department, and employee sentiment about AI (survey). These leading indicators predict whether your culture change is working months before business metrics show it. If adoption is flat after two quarters despite available tools and training, the blockers are cultural (fear, skepticism, lack of permission) not technical."
       }
     ],
     quiz: [
@@ -2848,12 +2876,12 @@ For example, start by publishing a one-page AI Feature Launch Checklist (eval re
       {
         scenario: "Your company's sales team starts using AI to draft merchant proposals. Quality is mixed — some proposals are excellent, others contain hallucinated product features that don't exist. The sales VP wants to ban AI tools entirely. What's the better approach?",
         options: [
-          "Support the ban — hallucinated product features could cause contractual and trust issues",
-          "Ignore the ban — AI productivity gains are too valuable to sacrifice for a few errors",
           "Create guardrails instead of bans: require AI-drafted proposals to go through a review checklist that catches common errors (verify product features, check pricing accuracy, review commitments), and provide training on effective AI use for proposal writing. Turn the failure into a learning opportunity for responsible AI adoption",
+          "Ignore the ban — AI productivity gains are too valuable to sacrifice for a few errors",
+          "Support the ban — hallucinated product features could cause contractual and trust issues",
           "Restrict AI tools to a list of approved use cases and ban them for customer-facing documents"
         ],
-        correct: 2,
+        correct: 0,
         explanation: "Bans kill adoption momentum and signal that AI is dangerous rather than powerful-but-requires-skill. The hallucination problem is real but solvable through process, not prohibition. A review checklist catches errors while preserving productivity gains. Training on prompt engineering for proposals (including 'always verify facts against product docs') addresses the root cause. This models the cultural approach: embrace AI tools with appropriate guardrails, not fear-driven bans."
       },
       {
@@ -2884,7 +2912,7 @@ For example, start by publishing a one-page AI Feature Launch Checklist (eval re
       },
       {
         heading: "Reporting & Operating Rhythm",
-        content: "Regular, structured reporting builds confidence and creates a cadence for decision-making.\n\n**Monthly leadership report:** Features in production and their business impact (real metrics). Features in development and current eval results. Cost trends (total spend, cost per feature, trajectory). Key decisions needed. Risks and mitigations.\n\n**The traffic light format:** For each initiative: Green (on track), Yellow (challenges identified, mitigation in progress), Red (not viable, recommend pivot). This forces clarity and helps leadership focus attention.\n\n**Earning the right to invest more:** AI investment follows a trust curve. Early: small, low-risk projects with clear ROI. Proven: larger investments with longer timelines. Established: strategic bets with transformational potential. Each successful delivery earns credibility for more ambitious projects.\n\n**Your operating rhythm:** Weekly team standups on execution. Monthly leadership report on impact and cost. Quarterly strategy review with portfolio rebalancing. Annual AI strategy refresh aligned with business planning."
+        content: "Regular, structured reporting builds confidence and creates a cadence for decision-making.\n\n**Monthly leadership report:** Features in production and their business impact (real metrics). Features in development and current eval results. Cost trends (total spend, cost per feature, trajectory). Key decisions needed. Risks and mitigations.\n\n**The traffic light format:** For each initiative: Green (on track), Yellow (challenges identified, mitigation in progress), Red (not viable, recommend pivot). This forces clarity and helps leadership focus attention.\n\n**Earning the right to invest more:** AI investment follows a trust curve. Early: small, low-risk projects with clear ROI. Proven: larger investments with longer timelines. Established: strategic bets with transformational potential. Each successful delivery earns credibility for more ambitious projects.\n\n**Your operating rhythm:** Weekly team standups on execution. Monthly leadership report on impact and cost. Quarterly strategy review with portfolio rebalancing. Annual AI strategy refresh aligned with business planning.\n\n**A concrete example of tailored stakeholder reporting:** For your CFO: \u2018AI investment this quarter: $180K. Three features in production generating $182K/month in measurable value (support automation $52K, conversion optimization $100K, fraud prevention $30K). Net quarterly ROI: 3.2x. Two features in development with strong eval results. One shut down after evaluation showed insufficient accuracy \u2014 team redirected.\u2019 For your CPO: \u2018AI support handles 68% of merchant queries (up from 61%). Merchant satisfaction scores for AI-handled queries: 4.2/5 vs 4.4/5 for human-handled. Gap closing at 0.1 points/quarter. Conversion optimizer showing +12bps in A/B test, projected $1.2M annualized.\u2019 Same underlying data, different framing for different concerns.\n\n**Your reporting discipline:** Every month, send a one-page AI update to each key stakeholder, tailored to their concerns. Every quarter, hold a strategy review with your team and sponsors. Every year, refresh the full AI strategy. This cadence keeps AI visible, accountable, and integrated into business rhythm."
       }
     ],
     quiz: [
@@ -2914,11 +2942,11 @@ For example, start by publishing a one-page AI Feature Launch Checklist (eval re
         scenario: "You're preparing your annual AI strategy presentation for the executive team. Last year you committed to 5 AI initiatives. Three delivered measurable value, one pivoted to a different approach, and one was shut down. How do you frame the shutdown?",
         options: [
           "Minimize it — focus on the 3 successes and briefly mention the other two as 'learnings'",
-          "Frame it honestly as portfolio management: 'We invested in 5 initiatives knowing not all would succeed. Three delivered value exceeding their cost. One pivoted based on data and is now on a better path. One was shut down after evaluation showed it wasn't viable, and we redirected that investment to higher-value opportunities. This is how disciplined AI investment works'",
+          "Present it as a successful experiment that generated valuable learnings for future initiatives",
           "Attribute the shutdown to external factors (model limitations, data quality) rather than a strategic misjudgment",
-          "Present it as a successful experiment that generated valuable learnings for future initiatives"
+          "Frame it honestly as portfolio management: 'We invested in 5 initiatives knowing not all would succeed. Three delivered value exceeding their cost. One pivoted based on data and is now on a better path. One was shut down after evaluation showed it wasn't viable, and we redirected that investment to higher-value opportunities. This is how disciplined AI investment works'"
         ],
-        correct: 1,
+        correct: 3,
         explanation: "Honest framing builds more trust than spin. Shutting down a failing initiative is a sign of disciplined investment, not failure. The portfolio framing is key: you expected not everything would work, you monitored evidence, you made data-driven decisions, and you reallocated capital. This is exactly how leadership wants to hear about uncertain investments. Minimizing (option A) or blaming externals (option C) erodes credibility. Option D is spin that leadership sees through."
       }
     
@@ -2930,7 +2958,7 @@ For example, start by publishing a one-page AI Feature Launch Checklist (eval re
     title: "Decision Intelligence",
     subtitle: "Using AI to make better decisions as a leader",
     icon: "\u229e",
-    estimatedMinutes: 8,
+    estimatedMinutes: 10,
     sections: [
       {
         heading: "AI-Augmented Strategic Thinking",
@@ -2939,7 +2967,7 @@ For example, start by publishing a one-page AI Feature Launch Checklist (eval re
     ,
       {
         heading: "AI for Organizational Diagnostics",
-        content: "Beyond personal decision-making, AI can help you diagnose organizational health and identify improvement opportunities across your AI org.\n\n**Team performance analysis:** Feed anonymized sprint data, incident reports, and feature delivery timelines into an LLM to identify patterns: which teams ship fastest, which have the most production incidents, where are the bottlenecks? The AI won't have perfect context, but it surfaces patterns humans miss when they're too close to the data.\n\n**Technology radar:** Use AI to synthesize information from engineering blogs, conference talks, and open-source trends to maintain an updated view of which technologies are gaining traction and which are declining. This replaces the ad-hoc 'someone saw a blog post' approach with systematic scanning.\n\n**Meeting and communication analysis:** AI can analyze (anonymized) meeting notes, Slack channels, and email patterns to surface communication bottlenecks, information silos, and alignment gaps. This is sensitive territory that requires transparency about what's being analyzed and why.\n\n**The critical caveat:** AI diagnostics are inputs to your judgment, not replacements for it. The AI doesn't understand organizational politics, personal dynamics, or strategic context. Use it to generate hypotheses and surface patterns, then validate with your own knowledge and direct conversations.\n\n**Your weekly practice:** Spend 30 minutes using an LLM as a thinking partner for one real decision. Describe the decision, ask for strongest arguments each way, surface your assumptions, identify what information would change your mind. The value isn\u2019t specific advice \u2014 it\u2019s forcing more rigorous examination of your thinking."
+        content: "Beyond personal decision-making, AI can help you diagnose organizational health and identify improvement opportunities across your AI org.\n\n**Team performance analysis:** Feed anonymized sprint data, incident reports, and feature delivery timelines into an LLM to identify patterns: which teams ship fastest, which have the most production incidents, where are the bottlenecks? The AI won't have perfect context, but it surfaces patterns humans miss when they're too close to the data.\n\n**Technology radar:** Use AI to synthesize information from engineering blogs, conference talks, and open-source trends to maintain an updated view of which technologies are gaining traction and which are declining. This replaces the ad-hoc 'someone saw a blog post' approach with systematic scanning.\n\n**Meeting and communication analysis:** AI can analyze (anonymized) meeting notes, Slack channels, and email patterns to surface communication bottlenecks, information silos, and alignment gaps. This is sensitive territory that requires transparency about what's being analyzed and why.\n\n**The critical caveat:** AI diagnostics are inputs to your judgment, not replacements for it. The AI doesn't understand organizational politics, personal dynamics, or strategic context. Use it to generate hypotheses and surface patterns, then validate with your own knowledge and direct conversations.\n\n**Your weekly practice:** Spend 30 minutes using an LLM as a thinking partner for one real decision. Describe the decision, ask for strongest arguments each way, surface your assumptions, identify what information would change your mind. The value isn\u2019t specific advice \u2014 it\u2019s forcing more rigorous examination of your thinking.\n\n**A concrete scenario:** You\u2019re deciding whether to build an AI merchant onboarding assistant. You ask an LLM: \u2018Here\u2019s the proposal. What are the 3 strongest arguments against it?\u2019 The LLM surfaces: (1) onboarding is a one-time event per merchant, so the AI sees limited training signal for improvement, (2) errors during onboarding have outsized trust impact since it\u2019s the merchant\u2019s first experience, (3) the current manual process might be more efficiently improved with traditional automation. You hadn\u2019t considered point 1. This changes your prioritization \u2014 you invest in the higher-volume checkout optimization instead."
       }
     ],
     quiz: [
