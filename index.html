@@ -3442,7 +3442,7 @@ function AILeadershipCourse() {
           !showSync ? React.createElement("button", {
             onClick: () => setShowSync(true),
             style: Object.assign({}, s.syncButton, { flex: 1 })
-          }, localStorage.getItem(ghTokenKey) ? "\u2713 Sync" : "\u2601 Sync") : React.createElement("button", {
+          }, localStorage.getItem(ghTokenKey) ? "\u2713 Synced" : "\u2601 Sync") : React.createElement("button", {
             onClick: () => setShowSync(false),
             style: Object.assign({}, s.syncButton, { flex: 1 })
           }, "\u2715 Close sync"),
