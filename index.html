@@ -45,7 +45,7 @@ const modules = [
 
 **Instruction tuning / RLHF** (Reinforcement Learning from Human Feedback) is where that raw capability gets shaped into something useful. Human raters evaluate the model's responses and the model learns to be helpful, harmless, and honest. This is what turns a next-word-predictor into something that can follow instructions, maintain a conversation, and refuse harmful requests.
 
-**Why this matters for you:** When a team proposes "training our own model," understand the difference between pre-training from scratch (almost never the right call), fine-tuning an existing model (sometimes appropriate), and simply prompting a frontier model well (often sufficient). The vast majority of enterprise AI value comes from clever use of already-trained models, not from training new ones.`
+**Why this matters for you:** When a team proposes "training our own model," understand the difference between pre-training from scratch (almost never the right call), fine-tuning an existing model (adjusting it with your data), and simply prompting a frontier model well (often sufficient). The vast majority of enterprise AI value comes from clever use of already-trained models, not from training new ones.`
       },
       {
         heading: "Transformers & Attention",
@@ -142,7 +142,9 @@ Hallucinations are more likely when the model is asked about niche topics (less 
 
 **Prompt engineering is not enough when:** the task requires proprietary or frequently-changing information (→ you need RAG), the model consistently gets the style or behavior wrong even with good prompts (→ consider fine-tuning), the task requires complex multi-step workflows (→ you need an agentic approach), or the accuracy requirement is near-100% on high-stakes decisions (→ you need verification layers).
 
-**A practical heuristic your teams should follow:** Always start with prompt engineering. If you can't achieve acceptable quality after serious prompt optimization (not 10 minutes of tinkering, but systematic testing across hundreds of examples), then escalate to RAG or fine-tuning. Teams that skip straight to complex architectures waste months building infrastructure they didn't need.`
+**A practical heuristic your teams should follow:** Always start with prompt engineering. If you can't achieve acceptable quality after serious prompt optimization (not 10 minutes of tinkering, but systematic testing across hundreds of examples), then escalate to RAG or fine-tuning. Teams that skip straight to complex architectures waste months building infrastructure they didn't need.
+
+**Your management principle:** Require teams to document their prompt engineering effort before proposing RAG or fine-tuning. Ask: how many prompt variations did you test? On how many examples? What was the best accuracy achieved? If the answer is vague, they haven't done the work yet.`
       }
     ],
     quiz: [
@@ -451,7 +453,7 @@ The key distinction is **autonomy in decision-making**. Agents choose their own 
     title: "Protocols & Interoperability",
     subtitle: "MCP, A2A, and the emerging agent ecosystem",
     icon: "◎",
-    estimatedMinutes: 8,
+    estimatedMinutes: 6,
     sections: [
       {
         heading: "Model Context Protocol (MCP)",
@@ -593,7 +595,7 @@ The key distinction is **autonomy in decision-making**. Agents choose their own 
     title: "Safety, Guardrails & Responsible AI",
     subtitle: "Essential for financial services",
     icon: "⊘",
-    estimatedMinutes: 8,
+    estimatedMinutes: 6,
     sections: [
       {
         heading: "The Guardrails Architecture",
@@ -654,7 +656,7 @@ The key distinction is **autonomy in decision-making**. Agents choose their own 
     title: "Cost & Infrastructure",
     subtitle: "The economics that determine what's viable",
     icon: "⊞",
-    estimatedMinutes: 8,
+    estimatedMinutes: 6,
     sections: [
       {
         heading: "The Unit Economics of AI Features",
@@ -667,7 +669,7 @@ The key distinction is **autonomy in decision-making**. Agents choose their own 
 • Compute for pre/post-processing
 • Monitoring and evaluation infrastructure
 
-**Model cost comparison (approximate, as of early 2025):**
+**Model cost comparison (approximate as of early 2025 \u2014 pricing changes rapidly, verify current rates):**
 Frontier models (GPT-4, Claude Opus): $10–30 per million input tokens
 Mid-tier (Claude Sonnet, GPT-4o): $3–5 per million input tokens
 Small/fast (Claude Haiku, GPT-4o-mini): $0.15–1 per million input tokens
@@ -685,7 +687,9 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
 
 **Model-agnostic architecture:** This is a non-negotiable design principle. The LLM market is evolving rapidly. Today's best model might not be tomorrow's. Your systems should be able to swap providers with configuration changes, not code rewrites. This means: abstract the LLM interface, don't bake model-specific features into your core logic, and maintain evaluation suites that can compare providers objectively.
 
-**Caching:** For many applications, a significant portion of queries are similar or identical. Caching LLM responses (exact match or semantic similarity) can reduce costs by 30–70% and dramatically improve latency. This is one of the highest-ROI infrastructure investments and is often overlooked.`
+**Caching:** For many applications, a significant portion of queries are similar or identical. Caching LLM responses (exact match or semantic similarity) can reduce costs by 30–70% and dramatically improve latency. This is one of the highest-ROI infrastructure investments and is often overlooked.
+
+**Your cost review question:** For every AI feature, require a one-page cost model: cost per interaction (all components), projected monthly volume, monthly run rate, and comparison against the current human-powered process. If a team can't produce this, they don't understand their own economics.`
       }
     ],
     quiz: [
@@ -748,7 +752,9 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
 
 **Competitive moats from AI:** Not all AI features create lasting advantage. A feature that any competitor can replicate by calling the same API is not a moat. Durable advantage comes from: proprietary data that improves the AI (network effects), deep integration into existing workflows (switching costs), accumulated evaluation data that enables continuous improvement, and platform capabilities that attract third-party developers.
 
-**The portfolio view:** At any given time, you should have a mix of: production features generating value (60%), features in active development (25%), and exploratory bets being evaluated (15%). If 100% of your AI investment is in production, you're not innovating. If 100% is exploratory, you're not delivering.`
+**The portfolio view:** At any given time, you should have a mix of: production features generating value (60%), features in active development (25%), and exploratory bets being evaluated (15%). If 100% of your AI investment is in production, you're not innovating. If 100% is exploratory, you're not delivering.
+
+**A concrete example:** Imagine you have budget for 5 AI projects. Allocate 3 to proven patterns (RAG-based support, classification-based routing, automated reporting) that will ship this quarter. Allocate 1 to shared platform infrastructure (eval framework, model gateway). Allocate 1 to an exploratory bet (agentic merchant advisor) with a 60-day checkpoint. This portfolio delivers near-term value while building capability.`
       }
     ],
     quiz: [
@@ -793,7 +799,7 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
     title: "MLOps & Production Systems",
     subtitle: "Why AI in production is different from traditional software",
     icon: "⊡",
-    estimatedMinutes: 8,
+    estimatedMinutes: 6,
     sections: [
       {
         heading: "How AI Systems Differ in Production",
@@ -820,7 +826,9 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
 
 **The "model update" challenge:** When your LLM provider updates their model (which happens without warning), your system's behavior can change. Output format, quality, latency, and cost can all shift. This is why evaluation suites are so important — they're your regression test suite, and you should run them after any model update.
 
-**A practical recommendation:** Invest in an evaluation and monitoring platform early. This isn't a nice-to-have that you add after launch — it's foundational infrastructure. Whether you build it, use open-source tools (LangSmith, Phoenix, Weights & Biases), or buy a platform (Braintrust, HumanLoop), having it in place from day one of development is critical.`
+**A practical recommendation:** Invest in an evaluation and monitoring platform early. This isn't a nice-to-have that you add after launch — it's foundational infrastructure. Whether you build it, use open-source tools (LangSmith, Phoenix, Weights & Biases), or buy a platform (Braintrust, HumanLoop), having it in place from day one of development is critical.
+
+**Your monitoring mandate:** Before any AI feature launches, require the team to show you a dashboard with: quality score trend, latency P50/P95/P99, cost per interaction, error rate, and escalation rate. If any metric doesn't have an alert threshold, ask why.`
       }
     ],
     quiz: [
@@ -890,7 +898,9 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
 
 **The demo trap:** AI demos are incredibly compelling. An LLM producing a fluent, impressive response in a live demo tells you almost nothing about whether the system will work reliably in production across thousands of edge cases. Train your organization to be skeptical of demos and to ask for evaluation data instead.
 
-**Communicating with leadership:** Frame AI investments as a portfolio with expected value, not as guaranteed outcomes. "We're pursuing 5 AI initiatives. Based on our evaluation data, 3 are on track to deliver measurable value this quarter, 1 needs more iteration, and 1 may be infeasible and we'll pivot the investment." This is honest and builds trust — much more so than over-promising and under-delivering.`
+**Communicating with leadership:** Frame AI investments as a portfolio with expected value, not as guaranteed outcomes. "We're pursuing 5 AI initiatives. Based on our evaluation data, 3 are on track to deliver measurable value this quarter, 1 needs more iteration, and 1 may be infeasible and we'll pivot the investment." This is honest and builds trust — much more so than over-promising and under-delivering.
+
+**A practical example:** Imagine reporting on 5 AI initiatives. Instead of "all on track," say: "A shipped and reduces support costs by $40K/month. B and C are in production with strong eval metrics. D plateaued at 78% accuracy — one more sprint on retrieval before we decide. E was shut down; we redirected that team to accelerate B." This builds trust through transparency.`
       }
     ],
     quiz: [
@@ -1220,7 +1230,7 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
     title: "Multimodal AI",
     subtitle: "Beyond text: vision, documents, and structured data",
     icon: "⬡",
-    estimatedMinutes: 8,
+    estimatedMinutes: 6,
     sections: [
       {
         heading: "What Multimodal Models Can Do",
@@ -1603,7 +1613,9 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
 
 **New skills to hire for:** Engineers who can effectively prompt and direct AI tools are more productive than those who can't. "AI-augmented development" is becoming a real skill. Look for it in hiring — not as a buzzword, but as demonstrated ability to use AI tools critically and effectively.
 
-**Security and IP implications:** AI coding assistants are trained on public code and may suggest code that matches existing open-source projects (licensing risk). They may also send your proprietary code to external APIs during the completion process. Evaluate your AI coding tools' data policies, consider enterprise versions with data isolation, and set clear policies about which repositories can use AI assistance.`
+**Security and IP implications:** AI coding assistants are trained on public code and may suggest code that matches existing open-source projects (licensing risk). They may also send your proprietary code to external APIs during the completion process. Evaluate your AI coding tools' data policies, consider enterprise versions with data isolation, and set clear policies about which repositories can use AI assistance.
+
+**Your adoption framework:** Don\u2019t mandate universal AI tool usage. Instead: provide access to AI coding tools for all engineers, track adoption voluntarily, measure both velocity AND quality metrics, and share internal case studies. Let adoption be pulled by demonstrated value, not pushed by mandate.`
       }
     ],
     quiz: [
@@ -1647,7 +1659,9 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
 
 **What NOT to standardize:** Implementation details (let teams choose their frameworks). Prompt engineering approaches (different tasks need different strategies). Specific model choices within approved tiers (let teams optimize for their use case). Experimentation (don't require full governance for internal prototypes).
 
-**The governance maturity ladder:** Level 1: ad-hoc (each team does their own thing). Level 2: guidelines (shared best practices, voluntary adoption). Level 3: standards (mandatory requirements with review processes). Level 4: platform (shared infrastructure enforces standards automatically). Most organizations should aim for Level 3 and build toward Level 4. Trying to jump straight to Level 4 before establishing shared standards usually fails.`
+**The governance maturity ladder:** Level 1: ad-hoc (each team does their own thing). Level 2: guidelines (shared best practices, voluntary adoption). Level 3: standards (mandatory requirements with review processes). Level 4: platform (shared infrastructure enforces standards automatically). Most organizations should aim for Level 3 and build toward Level 4. Trying to jump straight to Level 4 before establishing shared standards usually fails.
+
+For example, start by publishing a one-page AI Feature Launch Checklist (eval requirements, guardrail standards, cost review) and require all teams to complete it. That\u2019s Level 2 to Level 3. Once most teams follow it voluntarily, encode the checklist into your platform tooling. That\u2019s Level 3 to Level 4.`
       },
       {
         heading: "Building an Internal AI Platform",
@@ -1747,7 +1761,9 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
 
 **Earning the right to invest more:** AI investment typically follows a trust curve. Early: small, low-risk projects with clear ROI. Proven: larger investments with longer timelines and higher uncertainty. Established: strategic bets with transformational potential. You can't skip stages. Each successful delivery earns the credibility to take on more ambitious projects.
 
-**Your operating rhythm:** Weekly team standups on AI execution. Monthly leadership report on business impact and cost. Quarterly strategy review with portfolio assessment and rebalancing. Annual AI strategy refresh aligned with business planning. This cadence keeps AI visible, accountable, and integrated into the business.`
+**Your operating rhythm:** Weekly team standups on AI execution. Monthly leadership report on business impact and cost. Quarterly strategy review with portfolio assessment and rebalancing. Annual AI strategy refresh aligned with business planning. This cadence keeps AI visible, accountable, and integrated into the business.
+
+**How this differs from Module 24:** That module covers initial AI business cases \u2014 how to propose and justify investments. This module covers ongoing reporting discipline that maintains trust over quarters and years. The initial pitch gets funding. Ongoing reporting determines whether you get more.\n\n**Your stakeholder map:** The CFO gets cost trends and ROI. The CPO gets feature impact and adoption. The CISO gets security and compliance. Generic reports serve no one \u2014 tailor communication to each stakeholder\u2019s concerns.`
       }
     ],
     quiz: [
@@ -1797,11 +1813,11 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
     sections: [
       {
         heading: "Multi-Head Attention",
-        content: "Phase 1 explained attention as \"the model looks at all parts of the input simultaneously.\" Let's go deeper into what that actually means architecturally.\n\n**Single attention** computes a relevance score between every pair of tokens in the input. For the sentence \"The merchant's payment failed because the gateway timed out,\" attention helps the model understand that \"failed\" relates to \"payment\" and \"timed out\" relates to \"gateway\" \u2014 and crucially, that \"timed out\" is the cause of \"failed.\"\n\n**Multi-head attention** runs multiple attention computations in parallel, each learning to focus on different types of relationships. One head might learn syntactic relationships (subject-verb), another semantic relationships (cause-effect), another positional patterns (nearby words). The outputs are concatenated and combined. GPT-4 uses 96+ attention heads.\n\n**Why this matters for you:** When your team says \"the model struggles with long documents,\" it's because attention is quadratic \u2014 doubling the input length quadruples the computation. This is why context window extensions (from 4K to 128K tokens) required architectural innovations, not just more compute. It also explains why RAG (retrieving only relevant chunks) is more efficient than stuffing everything into context."
+        content: "You now understand AI concepts and can make informed decisions. Phase 3 goes deeper into the technical machinery \u2014 not to make you an ML engineer, but to give you the depth to challenge architectural proposals, diagnose production issues, and hold your own in design reviews.\n\nPhase 1 explained attention as \"the model looks at all parts of the input simultaneously.\" Let's go deeper into what that actually means architecturally.\n\n**Single attention** computes a relevance score between every pair of tokens in the input. For the sentence \"The merchant's payment failed because the gateway timed out,\" attention helps the model understand that \"failed\" relates to \"payment\" and \"timed out\" relates to \"gateway\" \u2014 and crucially, that \"timed out\" is the cause of \"failed.\"\n\n**Multi-head attention** runs multiple attention computations in parallel, each learning to focus on different types of relationships. One head might learn syntactic relationships (subject-verb), another semantic relationships (cause-effect), another positional patterns (nearby words). The outputs are concatenated and combined. GPT-4 uses 96+ attention heads.\n\n**Why this matters for you:** When your team says \"the model struggles with long documents,\" it's because attention is quadratic \u2014 doubling the input length quadruples the computation. This is why context window extensions (from 4K to 128K tokens) required architectural innovations, not just more compute. It also explains why RAG (retrieving only relevant chunks) is more efficient than stuffing everything into context."
       },
       {
         heading: "The KV Cache & Why It Matters for Costs",
-        content: "The **KV (Key-Value) cache** is one of the most practically important transformer internals for an engineering leader to understand, because it directly drives your serving costs and latency.\n\n**How generation works:** LLMs generate text one token at a time. To generate token 100, the model needs to \"attend to\" all 99 previous tokens. Without caching, it would recompute attention over all previous tokens for every new token generated. That's enormously wasteful.\n\n**The KV cache stores** the intermediate attention computations (keys and values) from all previous tokens so they don't need to be recomputed. This makes generation much faster but consumes significant GPU memory. For a 70B parameter model generating a 4K token response, the KV cache alone can consume 10-20GB of GPU memory.\n\n**Why this matters for serving costs:** KV cache size scales with sequence length \u00d7 number of layers \u00d7 number of heads. Longer conversations = more memory = fewer concurrent requests per GPU = higher cost per request. This is why: long conversations cost more to serve than short ones, system prompts should be as concise as possible (they consume KV cache for every request), and \"prefix caching\" (reusing KV cache for shared system prompts) is a significant cost optimization.\n\n**Your decision leverage:** When your team proposes adding more context to system prompts or increasing max conversation length, understand that these aren't free \u2014 they have direct GPU memory and cost implications."
+        content: "The **KV (Key-Value) cache** is one of the most practically important transformer internals for an engineering leader to understand, because it directly drives your serving costs and latency.\n\n**How generation works:** LLMs generate text one token at a time. To generate token 100, the model needs to \"attend to\" all 99 previous tokens. Without caching, it would recompute attention over all previous tokens for every new token generated. That's enormously wasteful.\n\n**The KV cache stores** the intermediate attention computations (keys and values) from all previous tokens so they don't need to be recomputed. This makes generation much faster but consumes significant GPU memory. For a 70B parameter model generating a 4K token response, the KV cache alone can consume 10-20GB of GPU memory.\n\n**Why this matters for serving costs:** KV cache size scales with sequence length \u00d7 number of layers \u00d7 number of heads. Longer conversations = more memory = fewer concurrent requests per GPU = higher cost per request. This is why: long conversations cost more to serve than short ones, system prompts should be as concise as possible (they consume KV cache for every request), and \"prefix caching\" (reusing KV cache for shared system prompts) is a significant cost optimization.\n\n**Your decision leverage:** When your team proposes adding more context to system prompts or increasing max conversation length, understand that these aren't free \u2014 they have direct GPU memory and cost implications.\n\n**A concrete example:** Your system prompt is 3,000 tokens. You serve 100 concurrent requests. That\u2019s 300,000 tokens of KV cache just for system prompts. If you double the system prompt, you either serve fewer concurrent requests or need more GPUs. This is why adding more instructions to the system prompt has hidden costs your team should quantify."
       },
       {
         heading: "Positional Encoding & Context Limits",
@@ -1897,7 +1913,7 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
       },
       {
         heading: "Choosing & Evaluating Embedding Models",
-        content: "Embedding model selection has an outsized impact on RAG quality. A better embedding model often improves retrieval more than a better LLM.\n\n**Popular models (ranked by typical quality):** Closed-source: OpenAI text-embedding-3-large, Cohere embed-v3, Voyage AI. Open-source: BGE-large, E5-large-v2, GTE-large. The MTEB leaderboard (a public ranking of embedding models across tasks) tracks quality, but general benchmarks may not reflect your domain.\n\n**How to evaluate for your use case:** Build a retrieval test set: 100-200 queries paired with their correct source documents. Run each embedding model on your test set and measure two things: Recall@K (for each query, did the correct document appear in the top K results?), and MRR (Mean Reciprocal Rank \u2014 how high does the correct document rank on average?). The model with the best recall on your data wins, regardless of general benchmark rankings.\n\n**When to fine-tune embeddings:** If your domain has highly specialized vocabulary (financial instrument codes, proprietary product names, domain jargon), general embedding models may underperform. Fine-tuning requires: pairs of queries and relevant documents from your domain (typically 1,000-10,000 pairs), and a validation set to measure improvement. The investment is typically worth it when retrieval accuracy on your eval set is below 85%.\n\n**Cost considerations:** Embedding is cheap per query but adds up at scale. Embedding every document chunk in your knowledge base (one-time) + embedding every user query (ongoing). At millions of documents and thousands of queries/day, embedding costs become non-trivial. Open-source models eliminate the per-call cost but require hosting."
+        content: "Embedding model selection has an outsized impact on RAG quality. A better embedding model often improves retrieval more than a better LLM.\n\n**Popular models (ranked by typical quality):** Closed-source: OpenAI text-embedding-3-large, Cohere embed-v3, Voyage AI. Open-source: BGE-large, E5-large-v2, GTE-large. The MTEB leaderboard (a public ranking of embedding models across tasks) tracks quality, but general benchmarks may not reflect your domain.\n\n**How to evaluate for your use case:** Build a retrieval test set: 100-200 queries paired with their correct source documents. Run each embedding model on your test set and measure two things: Recall@K (for each query, did the correct document appear in the top K results?), and MRR (Mean Reciprocal Rank \u2014 how high does the correct document rank on average?). The model with the best recall on your data wins, regardless of general benchmark rankings.\n\n**When to fine-tune embeddings:** If your domain has highly specialized vocabulary (financial instrument codes, proprietary product names, domain jargon), general embedding models may underperform. Fine-tuning requires: pairs of queries and relevant documents from your domain (typically 1,000-10,000 pairs), and a validation set to measure improvement. The investment is typically worth it when retrieval accuracy on your eval set is below 85%.\n\n**Cost considerations:** Embedding is cheap per query but adds up at scale. Embedding every document chunk in your knowledge base (one-time) + embedding every user query (ongoing). At millions of documents and thousands of queries/day, embedding costs become non-trivial. Open-source models eliminate the per-call cost but require hosting.\n\n**Your embedding model decision framework:** Start with a popular open-source model (BGE-large or E5-large). Build your retrieval eval set. Measure Recall@K. If recall is above 85%, optimize chunking instead. If below 85%, test alternatives. Only consider fine-tuning after proving general models are the bottleneck."
       }
     ],
     quiz: [
@@ -2103,7 +2119,7 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
     title: "LLM Serving Infrastructure",
     subtitle: "The platforms your models run on",
     icon: "\u2298",
-    estimatedMinutes: 6,
+    estimatedMinutes: 8,
     sections: [
       {
         heading: "Serving Frameworks",
@@ -2157,7 +2173,7 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
     title: "Data Pipelines for AI",
     subtitle: "The unglamorous infrastructure that makes AI work",
     icon: "\u229e",
-    estimatedMinutes: 6,
+    estimatedMinutes: 8,
     sections: [
       {
         heading: "Feature Stores & Data Versioning",
@@ -2211,7 +2227,7 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
     title: "AI System Architecture Patterns",
     subtitle: "How to architect reliable AI-powered services",
     icon: "\u2726",
-    estimatedMinutes: 6,
+    estimatedMinutes: 8,
     sections: [
       {
         heading: "Reliability Patterns for AI Services",
@@ -2265,7 +2281,7 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
     title: "Benchmarking & Model Evaluation Internals",
     subtitle: "Why benchmarks lie and how to evaluate honestly",
     icon: "\u2299",
-    estimatedMinutes: 6,
+    estimatedMinutes: 8,
     sections: [
       {
         heading: "How Benchmarks Work (and Mislead)",
@@ -2273,7 +2289,7 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
       },
       {
         heading: "Building Domain-Specific Benchmarks",
-        content: "The most valuable benchmarks are the ones you build yourself \u2014 tailored to your actual use cases.\n\n**Design principles:** Cover your real use case distribution (weight tasks by how often they occur in production). Include difficulty tiers (easy, medium, hard \u2014 so you can see where models struggle). Include adversarial cases (inputs designed to cause failures). Version and maintain (update as your use cases evolve).\n\n**Contamination prevention:** If your benchmark questions are public, model providers might (intentionally or accidentally) train on them. Keep your benchmark private. Rotate questions periodically. Include \"canary\" questions that you can detect in model outputs if they've leaked.\n\n**Statistical rigor:** With 100 eval questions, a 3% difference between models might be noise. With 500 questions, it's likely real. Calculate confidence intervals (a range showing uncertainty, like 87% plus or minus 3%) on your results. Don't declare a winner based on small differences on small eval sets.\n\n**Comparative evaluation framework:** For model bake-offs, test each model on: your domain-specific benchmark (primary), a general capability benchmark (regression check), latency and throughput on your serving infrastructure, cost per 1K queries at your average input/output length. The winner is the model with the best score on your domain benchmark that also meets cost and latency requirements."
+        content: "The most valuable benchmarks are the ones you build yourself \u2014 tailored to your actual use cases.\n\n**Design principles:** Cover your real use case distribution (weight tasks by how often they occur in production). Include difficulty tiers (easy, medium, hard \u2014 so you can see where models struggle). Include adversarial cases (inputs designed to cause failures). Version and maintain (update as your use cases evolve).\n\n**Contamination prevention:** If your benchmark questions are public, model providers might (intentionally or accidentally) train on them. Keep your benchmark private. Rotate questions periodically. Include \"canary\" questions that you can detect in model outputs if they've leaked.\n\n**Statistical rigor:** With 100 eval questions, a 3% difference between models might be noise. With 500 questions, it's likely real. Calculate confidence intervals (a range showing uncertainty, like 87% plus or minus 3%) on your results. Don't declare a winner based on small differences on small eval sets.\n\n**Comparative evaluation framework:** For model bake-offs, test each model on: your domain-specific benchmark (primary), a general capability benchmark (regression check), latency and throughput on your serving infrastructure, cost per 1K queries at your average input/output length. The winner is the model with the best score on your domain benchmark that also meets cost and latency requirements.\n\n**Your model selection principle:** Never select a model based on public benchmark scores alone. Build a domain-specific eval set (200+ examples), test each candidate under identical conditions, and choose based on your results \u2014 not the leaderboard."
       }
     ],
     quiz: [
@@ -2319,7 +2335,7 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
     title: "Debugging AI Systems",
     subtitle: "Finding and fixing problems in non-deterministic systems",
     icon: "\u25c9",
-    estimatedMinutes: 6,
+    estimatedMinutes: 8,
     sections: [
       {
         heading: "Root Cause Analysis for AI Failures",
@@ -2373,15 +2389,15 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
     title: "AI in Payments & Commerce",
     subtitle: "Applying AI to your domain",
     icon: "\u25c8",
-    estimatedMinutes: 6,
+    estimatedMinutes: 10,
     sections: [
       {
         heading: "AI Across the Merchant Lifecycle",
-        content: "AI can add value at every stage of the merchant relationship \u2014 from acquisition through retention. Understanding the full landscape helps you prioritize investments with the highest compounding value.\n\n**Acquisition:** AI-powered lead scoring, personalized outreach, intelligent pricing proposals. Use structured data (merchant size, industry, geography) through classical ML models for scoring, and LLMs for generating personalized communications.\n\n**Onboarding:** Automated document processing (ID verification, business license extraction), intelligent form pre-filling, proactive issue detection during integration. Multimodal AI processes documents while chatbot-style interfaces guide merchants through setup.\n\n**Active commerce:** Checkout conversion optimization (personalized payment method ordering, smart defaults), fraud detection (real-time transaction scoring), dynamic pricing, inventory recommendations, AI-powered dispute resolution.\n\n**Retention:** Churn prediction (classical ML on behavioral signals), proactive outreach (LLM-generated personalized check-ins), merchant health dashboards with AI-generated insights, automated re-engagement campaigns.\n\n**The strategic lens:** Not all lifecycle stages benefit equally from AI. Focus first where: volume is highest (active commerce), feedback loops are clearest (fraud detection \u2014 you know if you were right), and the current process is most manual (onboarding document processing)."
+        content: "You now have conceptual foundations, decision-making frameworks, and technical depth. Phase 4 completes the picture with strategic leadership \u2014 shaping AI vision, building teams and culture, navigating regulation, and managing the organizational transformation that AI demands.\n\nAI can add value at every stage of the merchant relationship \u2014 from acquisition through retention. Understanding the full landscape helps you prioritize investments with the highest compounding value.\n\n**Acquisition:** AI-powered lead scoring, personalized outreach, intelligent pricing proposals. Use structured data (merchant size, industry, geography) through classical ML models for scoring, and LLMs for generating personalized communications.\n\n**Onboarding:** Automated document processing (ID verification, business license extraction), intelligent form pre-filling, proactive issue detection during integration. Multimodal AI processes documents while chatbot-style interfaces guide merchants through setup.\n\n**Active commerce:** Checkout conversion optimization (personalized payment method ordering, smart defaults), fraud detection (real-time transaction scoring), dynamic pricing, inventory recommendations, AI-powered dispute resolution.\n\n**Retention:** Churn prediction (classical ML on behavioral signals), proactive outreach (LLM-generated personalized check-ins), merchant health dashboards with AI-generated insights, automated re-engagement campaigns.\n\n**The strategic lens:** Not all lifecycle stages benefit equally from AI. Focus first where: volume is highest (active commerce), feedback loops are clearest (fraud detection \u2014 you know if you were right), and the current process is most manual (onboarding document processing)."
       },
       {
         heading: "Agentic Commerce",
-        content: "Agentic commerce \u2014 where AI agents act on behalf of merchants and consumers \u2014 is the frontier that could reshape payment platforms.\n\n**The vision:** A merchant's AI agent monitors inventory, adjusts pricing, manages disputes, optimizes checkout flows, and coordinates with supplier agents \u2014 all autonomously within defined boundaries. A consumer's AI agent comparison-shops, negotiates, and completes purchases across merchants. The payment platform becomes the trusted coordination layer between these agents.\n\n**What makes it possible now:** Tool-use capabilities in LLMs (agents can call APIs), standardized protocols (MCP for tool access, A2A for agent communication), and growing merchant comfort with AI automation.\n\n**What makes it hard:** Trust boundaries (how much autonomy to grant an agent with financial authority), liability (who's responsible when an agent makes a bad trade?), security (agent-to-agent communication as an attack surface), and the cold start problem (agents aren't useful until there's an ecosystem).\n\n**Your strategic question:** Is your platform positioning to be the coordination layer for agent-to-agent commerce, or just adding AI features to existing human workflows? The answer has profound architectural implications \u2014 the former requires MCP servers, A2A support, agent authentication, and escrow systems. The latter is feature development."
+        content: "Agentic commerce \u2014 where AI agents act on behalf of merchants and consumers \u2014 is the frontier that could reshape payment platforms.\n\n**The vision:** A merchant's AI agent monitors inventory, adjusts pricing, manages disputes, optimizes checkout flows, and coordinates with supplier agents \u2014 all autonomously within defined boundaries. A consumer's AI agent comparison-shops, negotiates, and completes purchases across merchants. The payment platform becomes the trusted coordination layer between these agents.\n\n**What makes it possible now:** Tool-use capabilities in LLMs (agents can call APIs), standardized protocols (MCP for tool access, A2A for agent communication), and growing merchant comfort with AI automation.\n\n**What makes it hard:** Trust boundaries (how much autonomy to grant an agent with financial authority), liability (who's responsible when an agent makes a bad trade?), security (agent-to-agent communication as an attack surface), and the cold start problem (agents aren't useful until there's an ecosystem).\n\n**Your strategic question:** Is your platform positioning to be the coordination layer for agent-to-agent commerce, or just adding AI features to existing human workflows? The answer has profound architectural implications \u2014 the former requires MCP servers, A2A support, agent authentication, and escrow systems. The latter is feature development.\n\n**A concrete scenario:** A merchant\u2019s AI inventory agent detects a trending product running low. It communicates via A2A with a supplier\u2019s fulfillment agent, confirms availability, and routes the purchase through your platform\u2019s MCP server. The merchant never intervened \u2014 agents handled the workflow within pre-set boundaries.\n\n**Your strategic assessment:** Map your platform\u2019s capabilities to the agentic commerce stack. Which APIs could become MCP servers? Which merchant workflows could be agent-automated? Where does your transaction data create advantages competitors can\u2019t replicate?"
       }
     ],
     quiz: [
@@ -2427,7 +2443,7 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
     title: "AI-Native Business Models",
     subtitle: "How AI changes what's possible, not just what's efficient",
     icon: "\u25c7",
-    estimatedMinutes: 6,
+    estimatedMinutes: 8,
     sections: [
       {
         heading: "From AI Features to AI-Native Products",
@@ -2435,7 +2451,7 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
       },
       {
         heading: "Competitive Moats in the AI Era",
-        content: "When every company has access to the same foundation models, where does durable competitive advantage come from?\n\n**Data moats:** Proprietary data that improves your AI systems in ways competitors can't replicate. Transaction data, merchant behavior data, and outcome data (what worked and what didn't) are the raw materials. The moat isn't having data \u2014 it's having data flywheels that compound advantage over time.\n\n**Integration depth:** AI features deeply integrated into workflow are stickier than standalone AI tools. A merchant who has configured AI-powered automated pricing, dispute resolution, and inventory management on your platform faces enormous switching costs.\n\n**Network effects:** In agentic commerce, the value of the network increases with each agent that connects. If your platform is where merchants' agents and consumers' agents transact, the network effect creates a moat similar to a marketplace.\n\n**Speed of learning:** The company that ships AI features fastest, collects feedback fastest, and iterates fastest accumulates advantage even without unique data or technology. Organizational speed is a moat.\n\n**What's NOT a moat:** Using GPT-4 (everyone can). Having a chatbot (commoditized). Using RAG for support (standard pattern). The model itself is never the moat \u2014 the data, integration, and network effects around it are."
+        content: "When every company has access to the same foundation models, where does durable competitive advantage come from?\n\n**Data moats:** Proprietary data that improves your AI systems in ways competitors can't replicate. Transaction data, merchant behavior data, and outcome data (what worked and what didn't) are the raw materials. The moat isn't having data \u2014 it's having data flywheels that compound advantage over time.\n\n**Integration depth:** AI features deeply integrated into workflow are stickier than standalone AI tools. A merchant who has configured AI-powered automated pricing, dispute resolution, and inventory management on your platform faces enormous switching costs.\n\n**Network effects:** In agentic commerce, the value of the network increases with each agent that connects. If your platform is where merchants' agents and consumers' agents transact, the network effect creates a moat similar to a marketplace.\n\n**Speed of learning:** The company that ships AI features fastest, collects feedback fastest, and iterates fastest accumulates advantage even without unique data or technology. Organizational speed is a moat.\n\n**What's NOT a moat:** Using GPT-4 (everyone can). Having a chatbot (commoditized). Using RAG for support (standard pattern). The model itself is never the moat \u2014 the data, integration, and network effects around it are.\n\n**A practical test:** For each AI feature, ask: could a competitor replicate this in 3 months using the same APIs? If yes, it\u2019s a feature, not a moat. If no \u2014 because it depends on proprietary data or deep integration \u2014 it\u2019s a strategic asset.\n\n**Your pricing framework:** Features that save merchants money \u2192 cost-sharing pricing. Features that generate merchant revenue \u2192 value-sharing. Platform capabilities for merchant agents \u2192 usage-based infrastructure pricing."
       }
     ],
     quiz: [
@@ -2478,10 +2494,65 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
   {
     id: 39,
     phase: 4,
+    title: "Competitive Intelligence for AI",
+    subtitle: "Seeing through the hype to real competitive threats",
+    icon: "\u2726",
+    estimatedMinutes: 8,
+    sections: [
+      {
+        heading: "Reading Competitor AI Signals",
+        content: "Every company claims to be \"AI-first.\" Your job is to separate real capability from marketing.\n\n**Job postings are the most honest signal.** If a competitor is hiring ML infrastructure engineers, they're building real AI systems. If they're only hiring \"AI strategists\" and \"prompt engineers,\" they're wrapping APIs. The seniority and specificity of AI roles reveals how deep the investment goes.\n\n**Patent filings** reveal technical direction 12-18 months before product launches. AI patents in payments typically cover: novel fraud detection methods, optimization algorithms for transaction routing, and AI-driven risk assessment techniques.\n\n**Open-source contributions** signal what a company is investing in. If a competitor contributes to agent frameworks, they're building agentic systems. If they contribute to evaluation tools, they're serious about production quality.\n\n**The vaporware test:** When a competitor announces an AI feature, ask: Is it generally available or \"coming soon\"? Is there a public API or just a demo? Are there real customer case studies with metrics? Can you test it yourself? Features that fail this test are announcements, not products.\n\n**Your intelligence practice:** Review competitor AI job postings monthly. Track AI patent filings quarterly. Monitor open-source contributions. Test competitor AI features when possible. Build a competitive landscape map updated quarterly with real evidence, not press releases."
+      }
+    ,
+      {
+        heading: "Building a Systematic Intelligence Practice",
+        content: "Competitive intelligence about AI shouldn't be ad-hoc. Build a repeatable process that keeps you informed without consuming excessive time.\n\n**Monthly tracking:** Review competitor AI job postings (set up alerts on LinkedIn for key companies + AI-related roles). Scan for new AI patent filings in your space. Check for new AI features in competitor products by signing up for their updates.\n\n**Quarterly deep dives:** Pick 2-3 competitors for deeper analysis. Review their engineering blog posts, conference talks, and open-source contributions. Map their AI team structure from LinkedIn. Estimate their AI investment level from team size and infrastructure signals.\n\n**Annual landscape mapping:** Create a competitive landscape matrix: which competitors have which AI capabilities, what's their apparent strategy (AI-enhanced vs. AI-native), where are the gaps you can exploit? Update this annually and share with your leadership team.\n\n**Evaluating AI startups in your space:** New entrants often innovate faster than incumbents. Track AI startups in payments and commerce. Evaluate them on: Is their AI capability genuinely differentiated? Do they have access to unique data? Could they be a partner, acquisition target, or threat? A startup that builds excellent merchant AI with proprietary data could become a competitor faster than a traditional fintech.\n\n**Your quarterly deliverable:** A one-page competitive intelligence brief: what changed, what it means for your strategy, and any recommended adjustments. Brief enough for leadership to read in 5 minutes, substantive enough to inform decisions.\n\n**Intelligence sources ranked by reliability:** (1) Job postings \u2014 can\u2019t hire for capabilities you\u2019re not building. (2) Open-source contributions \u2014 reveals technical direction. (3) Patent filings \u2014 12-18 month signal. (4) Customer case studies with metrics \u2014 only reliable evidence. (5) Blog posts \u2014 marketing, apply the vaporware test.\n\n**A concrete example:** Competitor publishes 4 blogs about vector databases, hires 6 retrieval ML engineers, contributes to an open-source vector DB. Blogs alone = weak signal. Combined with hiring and code = strong signal they\u2019re building RAG infrastructure."
+      }
+    ],
+    quiz: [
+      {
+        scenario: "A competitor announces 'revolutionary AI-powered fraud detection with 99.9% accuracy.' Their press release is light on details. How do you assess this?",
+        options: [
+          "Take it seriously \u2014 99.9% accuracy would be industry-leading and represents a significant competitive threat",
+          "Accelerate your own fraud detection AI to match or exceed their claimed performance",
+          "Ignore it \u2014 every company makes inflated AI claims and this is no different",
+          "Check their job postings (are they hiring ML engineers or just marketing?), look for published benchmarks or methodology, try to test the feature, and check if existing customers report measurable improvement. 99.9% accuracy claims without methodology are almost certainly marketing"
+        ],
+        correct: 3,
+        explanation: "Apply the vaporware test. Extraordinary claims require evidence. 99.9% fraud detection accuracy would be genuinely revolutionary \u2014 which is exactly why it's probably not real. Check the tangible signals: are they actually building ML infrastructure (job postings)? Is there reproducible methodology? Do real customers confirm it? Don't ignore it (they might have something real) but don't panic-react to unverified marketing either."
+      },
+      {
+        scenario: "You notice a competitor has posted 15 job listings for 'AI Agent Engineers' and 'MCP Server Developers' in the past month. They haven't announced any agent-related products. What intelligence do you extract from this?",
+        options: [
+          "They're building agentic AI capabilities and are likely 6-12 months from launching agent-based merchant features. The MCP server roles suggest they're building their platform as an agent-accessible ecosystem. This validates your agentic commerce investment thesis and provides a timeline to beat or match",
+          "Job postings don't reliably predict product direction — they could be exploratory hires",
+          "They're building internal AI tools for their own operations, not merchant-facing features",
+          "You should immediately accelerate your own agent hiring to match their pace"
+        ],
+        correct: 0,
+        explanation: "Job postings are the most honest competitive signal because companies can't hire for capabilities they're not building. 15 roles specifically in agent engineering and MCP development strongly indicates an agentic platform play. The MCP detail is especially telling — it signals they're building for interoperability, not just internal agents. This is actionable intelligence: validate your own agentic strategy, estimate their timeline (6-12 months from hiring to launch), and ensure your architecture decisions account for this competitive trajectory."
+      },
+      {
+        scenario: "A competitor publishes a blog post claiming 'Our AI reduces merchant churn by 35%.' Your CEO shares it with you, concerned. How do you evaluate this claim?",
+        options: [
+          "Take it at face value — publishing a specific metric implies they have data to back it up",
+          "Apply the vaporware test: Is this a controlled A/B test result or a cherry-picked metric? Is it based on a pilot with 50 merchants or a production rollout? Does '35% reduction' mean from 10% churn to 6.5%, or from 2% to 1.3%? Without methodology, the number is marketing. Check for independent validation before reacting",
+          "Immediately build a competing churn-reduction AI to neutralize their advantage",
+          "Dismiss it as marketing — every company inflates their AI metrics in blog posts"
+        ],
+        correct: 1,
+        explanation: "Neither blind trust nor blanket dismissal. Apply critical evaluation: what's the methodology (A/B test or before/after comparison)? What's the sample (50 merchants or 50,000)? What's the baseline (reducing high churn is easier than reducing low churn)? A 35% reduction from a 10% baseline is meaningful; from a 1% baseline it's noise. Without methodology details, it's a marketing number that may or may not reflect reality. Investigate before either panicking or dismissing."
+      }
+    
+    ]
+  },
+  {
+    id: 40,
+    phase: 4,
     title: "AI Talent Strategy",
     subtitle: "Building and retaining the team that builds the future",
     icon: "\u25b3",
-    estimatedMinutes: 6,
+    estimatedMinutes: 10,
     sections: [
       {
         heading: "Hiring AI Talent",
@@ -2489,7 +2560,7 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
       },
       {
         heading: "Retention & Growth",
-        content: "AI engineers are the most sought-after talent in tech. Retention requires understanding what motivates them.\n\n**What AI engineers care about:** Working on meaningful problems (not just AI for AI's sake). Seeing their work reach production (nothing kills morale faster than models that never ship). Access to compute and tools (don't penny-pinch on GPUs for experimentation). Learning and growth (the field moves fast and they want to stay current). Technical autonomy (trust them to make technical decisions within strategic constraints).\n\n**What drives them away:** Bureaucracy that slows experimentation. Leadership that treats AI as magic (\"just make it work\"). No evaluation culture (shipping without knowing if it works). Constant re-prioritization (AI projects need sustained focus). Using AI as a marketing buzzword without real commitment.\n\n**Building a learning culture:** Allocate 10-20% time for experimentation and learning. Run internal reading groups on new papers and techniques. Send people to conferences (NeurIPS, ICML). Create internal sharing forums where teams present what they've learned. This isn't a perk \u2014 it's essential for keeping your team's skills current in a field that evolves monthly.\n\n**Career ladders:** AI engineers need a career path that doesn't force them into management. Staff AI Engineer, Principal AI Engineer, and AI Architect roles should be well-defined with clear expectations and compensation parity with management tracks."
+        content: "AI engineers are the most sought-after talent in tech. Retention requires understanding what motivates them.\n\n**What AI engineers care about:** Working on meaningful problems (not just AI for AI's sake). Seeing their work reach production (nothing kills morale faster than models that never ship). Access to compute and tools (don't penny-pinch on GPUs for experimentation). Learning and growth (the field moves fast and they want to stay current). Technical autonomy (trust them to make technical decisions within strategic constraints).\n\n**What drives them away:** Bureaucracy that slows experimentation. Leadership that treats AI as magic (\"just make it work\"). No evaluation culture (shipping without knowing if it works). Constant re-prioritization (AI projects need sustained focus). Using AI as a marketing buzzword without real commitment.\n\n**Building a learning culture:** Allocate 10-20% time for experimentation and learning. Run internal reading groups on new papers and techniques. Send people to conferences (NeurIPS, ICML). Create internal sharing forums where teams present what they've learned. This isn't a perk \u2014 it's essential for keeping your team's skills current in a field that evolves monthly.\n\n**Career ladders:** AI engineers need a career path that doesn't force them into management. Staff AI Engineer, Principal AI Engineer, and AI Architect roles should be well-defined with clear expectations and compensation parity with management tracks.\n\n**Your retention checklist:** Quarterly, assess each senior AI engineer: Challenging problems? Shipped to production recently? Clear next career step? Learning new techniques? Any \u2018no\u2019 is a retention risk.\n\n**A concrete scenario:** Your best ML engineer built the RAG infrastructure and it\u2019s in maintenance mode. She\u2019s bored. Before she interviews elsewhere, proactively move her to the hardest new initiative and backfill maintenance with a junior engineer."
       }
     ],
     quiz: [
@@ -2530,12 +2601,12 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
     ]
   },
   {
-    id: 40,
+    id: 41,
     phase: 4,
     title: "Technical Debt in AI Systems",
     subtitle: "The hidden costs that compound silently",
     icon: "\u25a1",
-    estimatedMinutes: 6,
+    estimatedMinutes: 8,
     sections: [
       {
         heading: "AI-Specific Technical Debt",
@@ -2543,7 +2614,7 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
       },
       {
         heading: "Measuring & Managing AI Debt",
-        content: "AI technical debt compounds faster than traditional debt because AI systems degrade silently.\n\n**Debt indicators to track:** Time to ship a prompt change (increasing = entanglement). Eval set age (months since last refresh). Number of undocumented prompt modifications. Model version currency (how far behind the latest). Data pipeline freshness compliance rate. Time to debug a quality issue.\n\n**Budgeting for debt repayment:** Allocate 20-30% of AI engineering capacity to debt reduction. This isn't optional overhead \u2014 it's investment in system reliability and iteration speed. Teams that spend 100% on features accumulate debt until the system becomes unmaintainable.\n\n**Debt prevention practices:** Every prompt change through version control with documented rationale. Eval sets reviewed and refreshed quarterly. Model migration tested proactively before forced by deprecation. Architecture reviews that explicitly assess coupling and dependency risks.\n\n**Your management principle:** Include AI technical debt as a standing item in your team's sprint planning. Make it visible, measurable, and prioritized \u2014 not something that gets attention only when the system breaks."
+        content: "AI technical debt compounds faster than traditional debt because AI systems degrade silently.\n\n**Debt indicators to track:** Time to ship a prompt change (increasing = entanglement). Eval set age (months since last refresh). Number of undocumented prompt modifications. Model version currency (how far behind the latest). Data pipeline freshness compliance rate. Time to debug a quality issue.\n\n**Budgeting for debt repayment:** Allocate 20-30% of AI engineering capacity to debt reduction. This isn't optional overhead \u2014 it's investment in system reliability and iteration speed. Teams that spend 100% on features accumulate debt until the system becomes unmaintainable.\n\n**Debt prevention practices:** Every prompt change through version control with documented rationale. Eval sets reviewed and refreshed quarterly. Model migration tested proactively before forced by deprecation. Architecture reviews that explicitly assess coupling and dependency risks.\n\n**Your management principle:** Include AI technical debt as a standing item in your team's sprint planning. Make it visible, measurable, and prioritized \u2014 not something that gets attention only when the system breaks.\n\n**Your debt audit template:** Quarterly, score each AI feature on: prompt versioning (in Git?), eval freshness (last updated?), model currency (latest version?), documentation (understandable?), monitoring (alerts on quality/cost/latency?). Each 1-5. Below 3 on any dimension \u2192 remediation ticket next sprint.\n\n**A concrete example:** Merchant support AI: prompt edited 30+ times (no docs), eval set 4 months old, model two versions behind. Debt scores: 2/5, 2/5, 1/5. Needs a maintenance sprint before any new features."
       }
     ],
     quiz: [
@@ -2584,12 +2655,12 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
     ]
   },
   {
-    id: 41,
+    id: 42,
     phase: 4,
     title: "AI Partnerships & Ecosystem",
     subtitle: "Navigating the vendor landscape strategically",
     icon: "\u2b21",
-    estimatedMinutes: 6,
+    estimatedMinutes: 8,
     sections: [
       {
         heading: "Model Provider Relationships",
@@ -2597,7 +2668,7 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
       },
       {
         heading: "Build vs. Buy for AI Components",
-        content: "The AI stack has many layers, and the build-vs-buy decision is different at each layer.\n\n**Always buy (for now):** Foundation models. Nobody should be pre-training LLMs unless they're a model provider. The cost, expertise, and data requirements are prohibitive for application companies.\n\n**Usually buy:** Vector databases (Pinecone, Weaviate, or use pgvector if already on Postgres). Observability platforms (LangSmith, Braintrust). Guardrail frameworks (Guardrails AI, NeMo Guardrails). These are commodity infrastructure where the build cost rarely justifies the effort.\n\n**Evaluate carefully:** RAG orchestration (frameworks like LangChain vs. custom). Agent frameworks (CrewAI, LangGraph vs. custom). Evaluation platforms (buy if standard, build if highly domain-specific). The decision depends on how much customization you need.\n\n**Usually build:** Domain-specific evaluation sets and rubrics. Fine-tuning pipelines specific to your data. Custom agent workflows for your specific business processes. Model gateway and routing logic tailored to your architecture. These are where your competitive advantage lies.\n\n**The principle:** Buy commodity infrastructure. Build competitive differentiation. Evaluate everything in between based on customization needs and strategic importance."
+        content: "The AI stack has many layers, and the build-vs-buy decision is different at each layer.\n\n**Always buy (for now):** Foundation models. Nobody should be pre-training LLMs unless they're a model provider. The cost, expertise, and data requirements are prohibitive for application companies.\n\n**Usually buy:** Vector databases (Pinecone, Weaviate, or use pgvector if already on Postgres). Observability platforms (LangSmith, Braintrust). Guardrail frameworks (Guardrails AI, NeMo Guardrails). These are commodity infrastructure where the build cost rarely justifies the effort.\n\n**Evaluate carefully:** RAG orchestration (frameworks like LangChain vs. custom). Agent frameworks (CrewAI, LangGraph vs. custom). Evaluation platforms (buy if standard, build if highly domain-specific). The decision depends on how much customization you need.\n\n**Usually build:** Domain-specific evaluation sets and rubrics. Fine-tuning pipelines specific to your data. Custom agent workflows for your specific business processes. Model gateway and routing logic tailored to your architecture. These are where your competitive advantage lies.\n\n**The principle:** Buy commodity infrastructure. Build competitive differentiation. Evaluate everything in between based on customization needs and strategic importance.\n\n**Your vendor scorecard:** Score on 5 dimensions: (1) Solves a real problem? (2) Will vendor exist in 2 years? (3) Can you switch away? (4) Creates dangerous dependency? (5) Total cost vs. build? Below 3 on #2 or #4 \u2192 needs migration contingency.\n\n**A practical example:** A startup\u2019s fraud model beats yours by 8%. Before signing: Can you extract data if they fold? Is fraud detection a core differentiator you should own? Strategic questions matter more than the accuracy delta."
       }
     ],
     quiz: [
@@ -2638,16 +2709,16 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
     ]
   },
   {
-    id: 42,
+    id: 43,
     phase: 4,
     title: "AI Ethics & Societal Impact",
     subtitle: "Beyond compliance to genuine responsibility",
     icon: "\u25ce",
-    estimatedMinutes: 6,
+    estimatedMinutes: 10,
     sections: [
       {
         heading: "Algorithmic Fairness in Financial Services",
-        content: "AI systems in payments can discriminate in ways that are both harmful and illegal \u2014 even without access to protected characteristics.\n\n**Proxy discrimination:** A model doesn't need to know a merchant's race to discriminate by race. If zip code, business name patterns, or transaction types correlate with race, the model may learn these proxies and produce disparate outcomes. A fraud model that disproportionately flags merchants in predominantly minority neighborhoods is discriminating, even if race isn't an input feature.\n\n**Disparate impact testing:** Regularly test your AI systems' outcomes across demographic groups. For each AI-driven decision (approval, flagging, pricing, feature access), check: are outcomes significantly different across groups? If so, is the difference justified by legitimate factors? Can the same accuracy be achieved with a less discriminatory approach?\n\n**The fairness-accuracy trade-off:** Removing a discriminatory proxy feature might reduce overall model accuracy. This is where leadership judgment matters. The legally and ethically correct choice is usually to accept the accuracy reduction rather than maintain a discriminatory feature. Document the decision and the reasoning.\n\n**Practical steps:** Include fairness metrics in your evaluation framework alongside accuracy. Run bias audits quarterly. Engage external auditors annually for high-stakes AI systems. Build diverse teams that are more likely to catch bias in design and testing."
+        content: "AI systems in payments can discriminate in ways that are both harmful and illegal \u2014 even without access to protected characteristics.\n\n**Proxy discrimination:** A model doesn't need to know a merchant's race to discriminate by race. If zip code, business name patterns, or transaction types correlate with race, the model may learn these proxies and produce disparate outcomes. A fraud model that disproportionately flags merchants in predominantly minority neighborhoods is discriminating, even if race isn't an input feature.\n\n**Disparate impact testing:** Regularly test your AI systems' outcomes across demographic groups. For each AI-driven decision (approval, flagging, pricing, feature access), check: are outcomes significantly different across groups? If so, is the difference justified by legitimate factors? Can the same accuracy be achieved with a less discriminatory approach?\n\n**The fairness-accuracy trade-off:** Removing a discriminatory proxy feature might reduce overall model accuracy. This is where leadership judgment matters. The legally and ethically correct choice is usually to accept the accuracy reduction rather than maintain a discriminatory feature. Document the decision and the reasoning.\n\n**Practical steps:** Include fairness metrics in your evaluation framework alongside accuracy. Run bias audits quarterly. Engage external auditors annually for high-stakes AI systems. Build diverse teams that are more likely to catch bias in design and testing.\n\n**Your fairness integration plan:** For every model making decisions affecting merchants: (1) define protected groups, (2) add demographic breakdowns to eval dashboard, (3) set disparity alert thresholds, (4) require bias review before deployment.\n\n**A concrete scenario:** Your risk model scores restaurants in certain neighborhoods 20% higher risk despite identical financials. A geographically-correlated feature is the cause. Removing it drops accuracy 1.5% but eliminates the demographic gap. That\u2019s the right tradeoff."
       },
       {
         heading: "AI and Your Workforce",
@@ -2692,12 +2763,12 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
     ]
   },
   {
-    id: 43,
+    id: 44,
     phase: 4,
     title: "AI Regulation Deep Dive",
     subtitle: "Navigating compliance as competitive advantage",
     icon: "\u25c6",
-    estimatedMinutes: 6,
+    estimatedMinutes: 10,
     sections: [
       {
         heading: "The Regulatory Landscape",
@@ -2705,7 +2776,7 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
       },
       {
         heading: "Turning Compliance into Advantage",
-        content: "Most companies treat compliance as overhead. It can be repositioned as competitive advantage.\n\n**Trust as a feature:** In financial services, merchants choose platforms they trust. Being able to say \"every AI-driven decision on our platform is auditable and explainable\" is a genuine selling point, especially for enterprise merchants with their own compliance obligations.\n\n**First-mover advantage in compliance:** Companies that build compliant AI systems before regulation mandates it have a head start when rules take effect. Competitors who deferred compliance investment face expensive retrofitting under deadline pressure.\n\n**Compliance infrastructure as platform capability:** If your AI platform includes built-in audit trails, explainability layers, and fairness monitoring, product teams don't need to build these for each feature. This accelerates feature development while maintaining compliance \u2014 a genuine competitive advantage in development speed.\n\n**The strategic bet:** Regulation is coming. It's a matter of when, not if. Investment in compliance infrastructure today is an option on future regulatory requirements \u2014 and a trust signal to merchants now."
+        content: "Most companies treat compliance as overhead. It can be repositioned as competitive advantage.\n\n**Trust as a feature:** In financial services, merchants choose platforms they trust. Being able to say \"every AI-driven decision on our platform is auditable and explainable\" is a genuine selling point, especially for enterprise merchants with their own compliance obligations.\n\n**First-mover advantage in compliance:** Companies that build compliant AI systems before regulation mandates it have a head start when rules take effect. Competitors who deferred compliance investment face expensive retrofitting under deadline pressure.\n\n**Compliance infrastructure as platform capability:** If your AI platform includes built-in audit trails, explainability layers, and fairness monitoring, product teams don't need to build these for each feature. This accelerates feature development while maintaining compliance \u2014 a genuine competitive advantage in development speed.\n\n**The strategic bet:** Regulation is coming. It's a matter of when, not if. Investment in compliance infrastructure today is an option on future regulatory requirements \u2014 and a trust signal to merchants now.\n\n**Your compliance roadmap:** Phase 1 (now): audit trails for all AI decisions. Phase 2 (6 months): explanation layers for high-impact decisions. Phase 3 (12 months): regular fairness audits. Phase 4 (ongoing): track regulatory developments proactively.\n\n**A concrete scenario:** A German merchant asks why their premium application was denied. With explanation infrastructure: \u2018Your chargeback rate of 2.3% exceeded the 1.5% threshold.\u2019 This turns compliance into a trust-building interaction."
       }
     ],
     quiz: [
@@ -2746,122 +2817,12 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
     ]
   },
   {
-    id: 44,
-    phase: 4,
-    title: "Decision Intelligence",
-    subtitle: "Using AI to make better decisions as a leader",
-    icon: "\u229e",
-    estimatedMinutes: 6,
-    sections: [
-      {
-        heading: "AI-Augmented Strategic Thinking",
-        content: "As an AI leader, you can use the same AI tools you're building for customers to augment your own decision-making.\n\n**Scenario planning with LLMs:** Before committing to a strategic direction, use LLMs to stress-test your thinking. \"Here's our AI strategy. What are the top 5 ways this could fail? What assumptions am I making that might be wrong? What would a skeptical board member challenge?\" The model won't have insider knowledge, but it excels at identifying blind spots and generating alternative perspectives.\n\n**Competitive analysis:** Feed publicly available information (earnings calls, blog posts, job listings, patent filings) into an LLM to synthesize competitive intelligence. \"Based on [competitor]'s recent job postings and blog posts, what AI capabilities are they likely building?\" This isn't a substitute for deep analysis but it accelerates pattern recognition.\n\n**Decision documentation:** Use AI to help document decision rationale. After a key decision, have an LLM help you articulate: what alternatives were considered, why this option was selected, what the key assumptions are, what would trigger a revisit, and what success looks like. This creates institutional memory and accountability.\n\n**The meta-skill:** The most valuable application of AI for a leader isn't efficiency \u2014 it's cognitive augmentation. Using AI to think through problems more thoroughly, consider more alternatives, and challenge your own assumptions. The leader who uses AI as a thinking partner makes better decisions than one who uses it as a typing assistant."
-      }
-    ,
-      {
-        heading: "AI for Organizational Diagnostics",
-        content: "Beyond personal decision-making, AI can help you diagnose organizational health and identify improvement opportunities across your AI org.\n\n**Team performance analysis:** Feed anonymized sprint data, incident reports, and feature delivery timelines into an LLM to identify patterns: which teams ship fastest, which have the most production incidents, where are the bottlenecks? The AI won't have perfect context, but it surfaces patterns humans miss when they're too close to the data.\n\n**Technology radar:** Use AI to synthesize information from engineering blogs, conference talks, and open-source trends to maintain an updated view of which technologies are gaining traction and which are declining. This replaces the ad-hoc 'someone saw a blog post' approach with systematic scanning.\n\n**Meeting and communication analysis:** AI can analyze (anonymized) meeting notes, Slack channels, and email patterns to surface communication bottlenecks, information silos, and alignment gaps. This is sensitive territory that requires transparency about what's being analyzed and why.\n\n**The critical caveat:** AI diagnostics are inputs to your judgment, not replacements for it. The AI doesn't understand organizational politics, personal dynamics, or strategic context. Use it to generate hypotheses and surface patterns, then validate with your own knowledge and direct conversations."
-      }
-    ],
-    quiz: [
-      {
-        scenario: "You're deciding between investing in agentic commerce (high risk, potentially transformative) or AI-powered merchant analytics (lower risk, clear near-term value). An advisor suggests using an LLM to help with the decision. What's the most valuable way to use it?",
-        options: [
-          "Ask the LLM which option has higher expected value based on industry trends",
-          "Ask it to analyze competitor moves to determine which option provides better competitive positioning",
-          "Ask it to generate the strongest arguments FOR and AGAINST each option, identify your unstated assumptions, and list what conditions would make each option clearly right or clearly wrong",
-          "Don't use an LLM for strategic decisions \u2014 these require human judgment and domain expertise"
-        ],
-        correct: 2,
-        explanation: "The highest-value use of AI in decision-making is cognitive augmentation \u2014 helping you think more thoroughly, not thinking for you. Generating strong arguments both ways forces consideration of perspectives you might have skipped. Identifying assumptions surfaces hidden risks. Defining conditions for success creates a decision framework you can revisit. The LLM doesn't decide \u2014 it expands your thinking."
-      },
-      {
-        scenario: "You need to decide whether to invest $2M in building a proprietary embedding model fine-tuned on your merchant data, or use off-the-shelf embeddings and invest the $2M in more AI features. How would you use AI to augment this decision?",
-        options: [
-          "Ask an LLM to calculate the ROI of each option based on your cost projections",
-          "Use an LLM to generate the 5 strongest arguments for each option, identify your hidden assumptions, map out what would need to be true for each option to be clearly right, and list the information you'd need to make a confident decision. Then make the decision yourself with a more complete picture",
-          "Run a Monte Carlo simulation using AI to model the financial outcomes of each option",
-          "Ask your AI team to prototype both options for 2 weeks and compare results"
-        ],
-        correct: 1,
-        explanation: "AI for decision-making is most valuable as a thinking partner, not a decision-maker. The LLM won't have your internal context to calculate ROI (option A is unreliable). But it excels at: generating arguments you might have missed, surfacing unstated assumptions, and structuring the decision framework. You still make the decision — but with a more thoroughly examined set of considerations. This is cognitive augmentation, the core concept of this module."
-      },
-      {
-        scenario: "Your quarterly AI strategy review is tomorrow. You have data on 6 AI initiatives: 3 performing well, 2 underperforming, 1 clearly failing. How can AI help you prepare?",
-        options: [
-          "Have an LLM generate the strategy presentation slides from your data",
-          "Feed the initiative data into an LLM and ask it to identify patterns across the successes and failures, generate tough questions your leadership team might ask, and draft a decision recommendation for the failing initiative with supporting reasoning",
-          "Use AI to create visualizations of each initiative's metrics for the review",
-          "Don't use AI — strategy reviews require human judgment that AI can't replace"
-        ],
-        correct: 1,
-        explanation: "The LLM can accelerate your preparation without replacing your judgment. Pattern identification across initiatives surfaces insights you might miss when looking at each one individually. Generating likely tough questions helps you prepare responses. Drafting recommendations gives you a starting point to refine, not a final answer. Option D ignores a useful tool. Options A and C reduce AI to formatting work rather than leveraging its analytical capabilities."
-      }
-    
-    ]
-  },
-  {
     id: 45,
-    phase: 4,
-    title: "Competitive Intelligence for AI",
-    subtitle: "Seeing through the hype to real competitive threats",
-    icon: "\u2726",
-    estimatedMinutes: 6,
-    sections: [
-      {
-        heading: "Reading Competitor AI Signals",
-        content: "Every company claims to be \"AI-first.\" Your job is to separate real capability from marketing.\n\n**Job postings are the most honest signal.** If a competitor is hiring ML infrastructure engineers, they're building real AI systems. If they're only hiring \"AI strategists\" and \"prompt engineers,\" they're wrapping APIs. The seniority and specificity of AI roles reveals how deep the investment goes.\n\n**Patent filings** reveal technical direction 12-18 months before product launches. AI patents in payments typically cover: novel fraud detection methods, optimization algorithms for transaction routing, and AI-driven risk assessment techniques.\n\n**Open-source contributions** signal what a company is investing in. If a competitor contributes to agent frameworks, they're building agentic systems. If they contribute to evaluation tools, they're serious about production quality.\n\n**The vaporware test:** When a competitor announces an AI feature, ask: Is it generally available or \"coming soon\"? Is there a public API or just a demo? Are there real customer case studies with metrics? Can you test it yourself? Features that fail this test are announcements, not products.\n\n**Your intelligence practice:** Review competitor AI job postings monthly. Track AI patent filings quarterly. Monitor open-source contributions. Test competitor AI features when possible. Build a competitive landscape map updated quarterly with real evidence, not press releases."
-      }
-    ,
-      {
-        heading: "Building a Systematic Intelligence Practice",
-        content: "Competitive intelligence about AI shouldn't be ad-hoc. Build a repeatable process that keeps you informed without consuming excessive time.\n\n**Monthly tracking:** Review competitor AI job postings (set up alerts on LinkedIn for key companies + AI-related roles). Scan for new AI patent filings in your space. Check for new AI features in competitor products by signing up for their updates.\n\n**Quarterly deep dives:** Pick 2-3 competitors for deeper analysis. Review their engineering blog posts, conference talks, and open-source contributions. Map their AI team structure from LinkedIn. Estimate their AI investment level from team size and infrastructure signals.\n\n**Annual landscape mapping:** Create a competitive landscape matrix: which competitors have which AI capabilities, what's their apparent strategy (AI-enhanced vs. AI-native), where are the gaps you can exploit? Update this annually and share with your leadership team.\n\n**Evaluating AI startups in your space:** New entrants often innovate faster than incumbents. Track AI startups in payments and commerce. Evaluate them on: Is their AI capability genuinely differentiated? Do they have access to unique data? Could they be a partner, acquisition target, or threat? A startup that builds excellent merchant AI with proprietary data could become a competitor faster than a traditional fintech.\n\n**Your quarterly deliverable:** A one-page competitive intelligence brief: what changed, what it means for your strategy, and any recommended adjustments. Brief enough for leadership to read in 5 minutes, substantive enough to inform decisions."
-      }
-    ],
-    quiz: [
-      {
-        scenario: "A competitor announces 'revolutionary AI-powered fraud detection with 99.9% accuracy.' Their press release is light on details. How do you assess this?",
-        options: [
-          "Take it seriously \u2014 99.9% accuracy would be industry-leading and represents a significant competitive threat",
-          "Accelerate your own fraud detection AI to match or exceed their claimed performance",
-          "Ignore it \u2014 every company makes inflated AI claims and this is no different",
-          "Check their job postings (are they hiring ML engineers or just marketing?), look for published benchmarks or methodology, try to test the feature, and check if existing customers report measurable improvement. 99.9% accuracy claims without methodology are almost certainly marketing"
-        ],
-        correct: 3,
-        explanation: "Apply the vaporware test. Extraordinary claims require evidence. 99.9% fraud detection accuracy would be genuinely revolutionary \u2014 which is exactly why it's probably not real. Check the tangible signals: are they actually building ML infrastructure (job postings)? Is there reproducible methodology? Do real customers confirm it? Don't ignore it (they might have something real) but don't panic-react to unverified marketing either."
-      },
-      {
-        scenario: "You notice a competitor has posted 15 job listings for 'AI Agent Engineers' and 'MCP Server Developers' in the past month. They haven't announced any agent-related products. What intelligence do you extract from this?",
-        options: [
-          "They're building agentic AI capabilities and are likely 6-12 months from launching agent-based merchant features. The MCP server roles suggest they're building their platform as an agent-accessible ecosystem. This validates your agentic commerce investment thesis and provides a timeline to beat or match",
-          "Job postings don't reliably predict product direction — they could be exploratory hires",
-          "They're building internal AI tools for their own operations, not merchant-facing features",
-          "You should immediately accelerate your own agent hiring to match their pace"
-        ],
-        correct: 0,
-        explanation: "Job postings are the most honest competitive signal because companies can't hire for capabilities they're not building. 15 roles specifically in agent engineering and MCP development strongly indicates an agentic platform play. The MCP detail is especially telling — it signals they're building for interoperability, not just internal agents. This is actionable intelligence: validate your own agentic strategy, estimate their timeline (6-12 months from hiring to launch), and ensure your architecture decisions account for this competitive trajectory."
-      },
-      {
-        scenario: "A competitor publishes a blog post claiming 'Our AI reduces merchant churn by 35%.' Your CEO shares it with you, concerned. How do you evaluate this claim?",
-        options: [
-          "Take it at face value — publishing a specific metric implies they have data to back it up",
-          "Apply the vaporware test: Is this a controlled A/B test result or a cherry-picked metric? Is it based on a pilot with 50 merchants or a production rollout? Does '35% reduction' mean from 10% churn to 6.5%, or from 2% to 1.3%? Without methodology, the number is marketing. Check for independent validation before reacting",
-          "Immediately build a competing churn-reduction AI to neutralize their advantage",
-          "Dismiss it as marketing — every company inflates their AI metrics in blog posts"
-        ],
-        correct: 1,
-        explanation: "Neither blind trust nor blanket dismissal. Apply critical evaluation: what's the methodology (A/B test or before/after comparison)? What's the sample (50 merchants or 50,000)? What's the baseline (reducing high churn is easier than reducing low churn)? A 35% reduction from a 10% baseline is meaningful; from a 1% baseline it's noise. Without methodology details, it's a marketing number that may or may not reflect reality. Investigate before either panicking or dismissing."
-      }
-    
-    ]
-  },
-  {
-    id: 46,
     phase: 4,
     title: "Building an AI-First Culture",
     subtitle: "From 'the AI team does AI' to 'everyone uses AI'",
     icon: "\u2299",
-    estimatedMinutes: 6,
+    estimatedMinutes: 8,
     sections: [
       {
         heading: "The Cultural Shift",
@@ -2869,7 +2830,7 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
       },
       {
         heading: "Executive Education & Change Management",
-        content: "Scaling AI requires that leaders at all levels understand enough to make good decisions. This course is a model for what you should create for your broader leadership team.\n\n**Tiered education:** Executives need: AI strategy literacy, use case evaluation frameworks, and enough technical understanding to ask good questions (like this course). Managers need: practical AI tool proficiency, team workflow integration, and change management skills. Individual contributors need: hands-on tool training, prompt engineering basics, and domain-specific AI applications.\n\n**The internal AI academy:** Build a structured learning path for each tier. Include: live workshops (not just self-paced), hands-on projects with real business problems, and cohort-based learning (people learn better together). Update the curriculum quarterly as the field evolves.\n\n**Change management principles for AI:** Address fears directly (\"AI won't replace you, but someone who uses AI effectively might outperform you\"). Make the transition gradual (AI assists, then AI suggests, then AI automates with oversight). Provide safety nets (if AI gets it wrong, the human can always override). Measure and share early wins publicly.\n\n**Your role:** As the AI leader, you're also the AI evangelist and educator. Every conversation with a non-AI leader is an opportunity to build understanding and excitement. But be honest about limitations \u2014 overselling AI destroys credibility faster than underselling it."
+        content: "Scaling AI requires that leaders at all levels understand enough to make good decisions. This course is a model for what you should create for your broader leadership team.\n\n**Tiered education:** Executives need: AI strategy literacy, use case evaluation frameworks, and enough technical understanding to ask good questions (like this course). Managers need: practical AI tool proficiency, team workflow integration, and change management skills. Individual contributors need: hands-on tool training, prompt engineering basics, and domain-specific AI applications.\n\n**The internal AI academy:** Build a structured learning path for each tier. Include: live workshops (not just self-paced), hands-on projects with real business problems, and cohort-based learning (people learn better together). Update the curriculum quarterly as the field evolves.\n\n**Change management principles for AI:** Address fears directly (\"AI won't replace you, but someone who uses AI effectively might outperform you\"). Make the transition gradual (AI assists, then AI suggests, then AI automates with oversight). Provide safety nets (if AI gets it wrong, the human can always override). Measure and share early wins publicly.\n\n**Your role:** As the AI leader, you're also the AI evangelist and educator. Every conversation with a non-AI leader is an opportunity to build understanding and excitement. But be honest about limitations \u2014 overselling AI destroys credibility faster than underselling it.\n\n**Your culture playbook:** Month 1-3: Identify 5-10 AI champions across departments. Month 3-6: Champions run peer demos of their AI workflows. Month 6-9: Establish role-specific training. Month 9-12: Measure and adjust.\n\n**A concrete example:** Your best salesperson discovers AI research before calls increases close rate 25%. She shares her workflow. Within a month, 60% of the team adopts it. One authentic peer success story drives more adoption than any executive email."
       }
     ],
     quiz: [
@@ -2910,12 +2871,12 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
     ]
   },
   {
-    id: 47,
+    id: 46,
     phase: 4,
     title: "AI Reporting & Stakeholder Management",
     subtitle: "Structured communication that builds trust",
     icon: "\u25c9",
-    estimatedMinutes: 6,
+    estimatedMinutes: 8,
     sections: [
       {
         heading: "Building Business Cases for AI",
@@ -2964,12 +2925,67 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
     ]
   },
   {
+    id: 47,
+    phase: 4,
+    title: "Decision Intelligence",
+    subtitle: "Using AI to make better decisions as a leader",
+    icon: "\u229e",
+    estimatedMinutes: 8,
+    sections: [
+      {
+        heading: "AI-Augmented Strategic Thinking",
+        content: "As an AI leader, you can use the same AI tools you're building for customers to augment your own decision-making.\n\n**Scenario planning with LLMs:** Before committing to a strategic direction, use LLMs to stress-test your thinking. \"Here's our AI strategy. What are the top 5 ways this could fail? What assumptions am I making that might be wrong? What would a skeptical board member challenge?\" The model won't have insider knowledge, but it excels at identifying blind spots and generating alternative perspectives.\n\n**Competitive analysis:** Feed publicly available information (earnings calls, blog posts, job listings, patent filings) into an LLM to synthesize competitive intelligence. \"Based on [competitor]'s recent job postings and blog posts, what AI capabilities are they likely building?\" This isn't a substitute for deep analysis but it accelerates pattern recognition.\n\n**Decision documentation:** Use AI to help document decision rationale. After a key decision, have an LLM help you articulate: what alternatives were considered, why this option was selected, what the key assumptions are, what would trigger a revisit, and what success looks like. This creates institutional memory and accountability.\n\n**The meta-skill:** The most valuable application of AI for a leader isn't efficiency \u2014 it's cognitive augmentation. Using AI to think through problems more thoroughly, consider more alternatives, and challenge your own assumptions. The leader who uses AI as a thinking partner makes better decisions than one who uses it as a typing assistant."
+      }
+    ,
+      {
+        heading: "AI for Organizational Diagnostics",
+        content: "Beyond personal decision-making, AI can help you diagnose organizational health and identify improvement opportunities across your AI org.\n\n**Team performance analysis:** Feed anonymized sprint data, incident reports, and feature delivery timelines into an LLM to identify patterns: which teams ship fastest, which have the most production incidents, where are the bottlenecks? The AI won't have perfect context, but it surfaces patterns humans miss when they're too close to the data.\n\n**Technology radar:** Use AI to synthesize information from engineering blogs, conference talks, and open-source trends to maintain an updated view of which technologies are gaining traction and which are declining. This replaces the ad-hoc 'someone saw a blog post' approach with systematic scanning.\n\n**Meeting and communication analysis:** AI can analyze (anonymized) meeting notes, Slack channels, and email patterns to surface communication bottlenecks, information silos, and alignment gaps. This is sensitive territory that requires transparency about what's being analyzed and why.\n\n**The critical caveat:** AI diagnostics are inputs to your judgment, not replacements for it. The AI doesn't understand organizational politics, personal dynamics, or strategic context. Use it to generate hypotheses and surface patterns, then validate with your own knowledge and direct conversations.\n\n**Your weekly practice:** Spend 30 minutes using an LLM as a thinking partner for one real decision. Describe the decision, ask for strongest arguments each way, surface your assumptions, identify what information would change your mind. The value isn\u2019t specific advice \u2014 it\u2019s forcing more rigorous examination of your thinking."
+      }
+    ],
+    quiz: [
+      {
+        scenario: "You're deciding between investing in agentic commerce (high risk, potentially transformative) or AI-powered merchant analytics (lower risk, clear near-term value). An advisor suggests using an LLM to help with the decision. What's the most valuable way to use it?",
+        options: [
+          "Ask the LLM which option has higher expected value based on industry trends",
+          "Ask it to analyze competitor moves to determine which option provides better competitive positioning",
+          "Ask it to generate the strongest arguments FOR and AGAINST each option, identify your unstated assumptions, and list what conditions would make each option clearly right or clearly wrong",
+          "Don't use an LLM for strategic decisions \u2014 these require human judgment and domain expertise"
+        ],
+        correct: 2,
+        explanation: "The highest-value use of AI in decision-making is cognitive augmentation \u2014 helping you think more thoroughly, not thinking for you. Generating strong arguments both ways forces consideration of perspectives you might have skipped. Identifying assumptions surfaces hidden risks. Defining conditions for success creates a decision framework you can revisit. The LLM doesn't decide \u2014 it expands your thinking."
+      },
+      {
+        scenario: "You need to decide whether to invest $2M in building a proprietary embedding model fine-tuned on your merchant data, or use off-the-shelf embeddings and invest the $2M in more AI features. How would you use AI to augment this decision?",
+        options: [
+          "Ask an LLM to calculate the ROI of each option based on your cost projections",
+          "Use an LLM to generate the 5 strongest arguments for each option, identify your hidden assumptions, map out what would need to be true for each option to be clearly right, and list the information you'd need to make a confident decision. Then make the decision yourself with a more complete picture",
+          "Run a Monte Carlo simulation using AI to model the financial outcomes of each option",
+          "Ask your AI team to prototype both options for 2 weeks and compare results"
+        ],
+        correct: 1,
+        explanation: "AI for decision-making is most valuable as a thinking partner, not a decision-maker. The LLM won't have your internal context to calculate ROI (option A is unreliable). But it excels at: generating arguments you might have missed, surfacing unstated assumptions, and structuring the decision framework. You still make the decision — but with a more thoroughly examined set of considerations. This is cognitive augmentation, the core concept of this module."
+      },
+      {
+        scenario: "Your quarterly AI strategy review is tomorrow. You have data on 6 AI initiatives: 3 performing well, 2 underperforming, 1 clearly failing. How can AI help you prepare?",
+        options: [
+          "Have an LLM generate the strategy presentation slides from your data",
+          "Feed the initiative data into an LLM and ask it to identify patterns across the successes and failures, generate tough questions your leadership team might ask, and draft a decision recommendation for the failing initiative with supporting reasoning",
+          "Use AI to create visualizations of each initiative's metrics for the review",
+          "Don't use AI — strategy reviews require human judgment that AI can't replace"
+        ],
+        correct: 1,
+        explanation: "The LLM can accelerate your preparation without replacing your judgment. Pattern identification across initiatives surfaces insights you might miss when looking at each one individually. Generating likely tough questions helps you prepare responses. Drafting recommendations gives you a starting point to refine, not a final answer. Option D ignores a useful tool. Options A and C reduce AI to formatting work rather than leveraging its analytical capabilities."
+      }
+    
+    ]
+  },
+  {
     id: 48,
     phase: 4,
     title: "The AI Leader's Playbook",
     subtitle: "Putting it all together",
     icon: "\u25c9",
-    estimatedMinutes: 6,
+    estimatedMinutes: 8,
     sections: [
       {
         heading: "Your First 90 Days",
@@ -2981,7 +2997,7 @@ Hosted APIs are simpler, always up-to-date, and have no infrastructure overhead 
       },
       {
         heading: "Staying Current",
-        content: "The AI field evolves faster than any other area of technology. Staying current is a professional obligation, not a hobby.\n\n**Your weekly minimum:** Read The Batch (Andrew Ng's newsletter) for curated AI news. Skim 2-3 AI papers or blog posts from major labs (Anthropic, OpenAI, Google DeepMind). Review your team's weekly updates for what's working and what's not.\n\n**Your monthly practice:** Have a deep conversation with 1-2 AI engineers about what they're learning. Attend or watch one AI talk or webinar. Review one competitor's AI moves in depth.\n\n**Your quarterly investment:** Update your mental model of the AI landscape. Revisit your AI strategy assumptions. Test a new AI tool or capability hands-on.\n\n**The personal development plan:** This course covers the concepts. But concepts decay without practice. The most effective AI leaders maintain a personal practice of using AI tools daily, experimenting with new capabilities, and continuously pressure-testing their understanding against reality.\n\n**You've completed 48 modules across 4 phases.** You now have the conceptual foundations, decision-making frameworks, technical depth, and strategic perspective to lead AI organizations effectively. The real learning happens when you apply these concepts to the decisions you face every day. Good luck, and keep building."
+        content: "The AI field evolves faster than any other area of technology. Staying current is a professional obligation, not a hobby.\n\n**Your weekly minimum:** Read The Batch (Andrew Ng's newsletter) for curated AI news. Skim 2-3 AI papers or blog posts from major labs (Anthropic, OpenAI, Google DeepMind). Review your team's weekly updates for what's working and what's not.\n\n**Your monthly practice:** Have a deep conversation with 1-2 AI engineers about what they're learning. Attend or watch one AI talk or webinar. Review one competitor's AI moves in depth.\n\n**Your quarterly investment:** Update your mental model of the AI landscape. Revisit your AI strategy assumptions. Test a new AI tool or capability hands-on.\n\n**The personal development plan:** This course covers the concepts. But concepts decay without practice. The most effective AI leaders maintain a personal practice of using AI tools daily, experimenting with new capabilities, and continuously pressure-testing their understanding against reality.\n\n**You've completed 48 modules across 4 phases.** You now have the conceptual foundations, decision-making frameworks, technical depth, and strategic perspective to lead AI organizations effectively. The real learning happens when you apply these concepts to the decisions you face every day. Good luck, and keep building.\n\n**Your weekly effectiveness checklist:** Am I making decisions based on eval data? Have I asked a team to show me their eval? Have I challenged an AI proposal with a simpler alternative? Have I used AI as a thinking partner? Have I communicated progress honestly? Five yes answers means you\u2019re operating as the AI leader this course prepared you to be."
       }
     ],
     quiz: [
