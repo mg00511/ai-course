@@ -3611,7 +3611,7 @@ function getStyles(dark) {
   moduleTitle: { fontSize: 36, fontWeight: 700, color: textHeading, lineHeight: 1.15, letterSpacing: -0.5, margin: 0 },
   moduleSubtitle: { fontSize: 18, color: textMuted, marginTop: 10, fontStyle: "italic" },
   sectionTabs: { display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 36 },
-  sectionTab: { display: "flex", alignItems: "center", gap: 8, padding: "8px 16px", border: "1px solid " + border, background: "transparent", color: textMuted, borderRadius: 20, cursor: "pointer", fontSize: 13, fontFamily: "'Source Serif 4', serif", transition: "all 0.2s" },
+  sectionTab: { display: "flex", alignItems: "center", gap: 8, padding: "8px 16px", border: "1px solid " + border, borderColor: border, background: "transparent", color: textMuted, borderRadius: 20, cursor: "pointer", fontSize: 13, fontFamily: "'Source Serif 4', serif", transition: "all 0.2s" },
   sectionTabActive: { borderColor: accent, color: accentText, background: accentBg },
   sectionTabQuizActive: { borderColor: accent, color: accentText, background: accentBg },
   sectionTabDot: { width: 7, height: 7, borderRadius: "50%", flexShrink: 0 },
@@ -3622,7 +3622,7 @@ function getStyles(dark) {
   bullet: { display: "flex", gap: 10, fontSize: 16, lineHeight: 1.75, color: text, marginBottom: 4, paddingLeft: 4 },
   bulletDot: { color: accent, fontWeight: 700, flexShrink: 0, marginTop: 1 },
   bottomActions: { display: "flex", alignItems: "center", justifyContent: "space-between", paddingTop: 32, borderTop: "1px solid " + border, flexWrap: "wrap", gap: 16 },
-  completeBtn: { padding: "10px 24px", borderRadius: 8, border: "1px solid " + border2, background: "transparent", color: textMuted, cursor: "pointer", fontSize: 14, fontFamily: "'Fira Code', monospace", transition: "all 0.2s" },
+  completeBtn: { padding: "10px 24px", borderRadius: 8, border: "1px solid " + border2, borderColor: border2, background: "transparent", color: textMuted, cursor: "pointer", fontSize: 14, fontFamily: "'Fira Code', monospace", transition: "all 0.2s" },
   completeBtnDone: { borderColor: green, color: green, background: "rgba(92, 184, 138, 0.08)" },
   navButtons: { display: "flex", gap: 10, alignItems: "center" },
   navBtn: { padding: "10px 20px", borderRadius: 8, border: "1px solid " + border2, background: "transparent", color: textMuted, cursor: "pointer", fontSize: 14, fontFamily: "'Source Serif 4', serif", transition: "all 0.2s" },
@@ -3633,7 +3633,7 @@ function getStyles(dark) {
   quizQuestionNumber: { fontSize: 11, color: accent, fontFamily: "'Fira Code', monospace", textTransform: "uppercase", letterSpacing: 2, marginBottom: 14 },
   quizScenario: { fontSize: 16, lineHeight: 1.7, color: textStrong, marginBottom: 20, fontStyle: "italic" },
   quizOptions: { display: "flex", flexDirection: "column", gap: 10 },
-  quizOption: { display: "flex", alignItems: "flex-start", gap: 14, padding: "14px 18px", border: "1px solid " + border2, background: "transparent", borderRadius: 10, cursor: "pointer", textAlign: "left", transition: "all 0.2s", color: text },
+  quizOption: { display: "flex", alignItems: "flex-start", gap: 14, padding: "14px 18px", border: "1px solid " + border2, borderColor: border2, background: "transparent", borderRadius: 10, cursor: "pointer", textAlign: "left", transition: "all 0.2s", color: text },
   quizOptionSelected: { borderColor: accent, background: accentBg, color: accentText },
   quizOptionCorrect: { borderColor: green, background: "rgba(92, 184, 138, 0.1)", color: dark ? "#A8DFC4" : "#2A7A50", cursor: "default" },
   quizOptionWrong: { borderColor: red, background: dark ? "rgba(212, 118, 106, 0.1)" : "rgba(192, 80, 74, 0.1)", color: dark ? "#E0A8A2" : "#9A3A34", cursor: "default" },
@@ -3642,7 +3642,7 @@ function getStyles(dark) {
   quizOptionText: { fontSize: 14, lineHeight: 1.65, fontFamily: "'Source Serif 4', serif" },
   revealBtn: { marginTop: 16, padding: "10px 24px", borderRadius: 8, border: "1px solid " + accent, background: accentBg, color: accentText, cursor: "pointer", fontSize: 14, fontFamily: "'Fira Code', monospace" },
   quizExplanation: { marginTop: 18, padding: 20, borderLeft: "3px solid", backgroundColor: explBg, borderRadius: "0 8px 8px 0" },
-  quizPassBanner: { padding: "16px 20px", borderRadius: 10, border: "1px solid", display: "flex", flexDirection: "column", alignItems: "flex-start", fontFamily: "'Fira Code', monospace", fontSize: 14 },
+  quizPassBanner: { padding: "16px 20px", borderRadius: 10, border: "1px solid", borderColor: border, display: "flex", flexDirection: "column", alignItems: "flex-start", fontFamily: "'Fira Code', monospace", fontSize: 14 },
   quizResultLabel: { fontSize: 13, fontWeight: 700, fontFamily: "'Fira Code', monospace", marginBottom: 10 }
 };
 }
